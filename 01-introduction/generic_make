@@ -1,0 +1,11 @@
+CC=gcc
+
+CFLAGS=-Wall -O2 -ansi -lm -g
+
+TARGET=main
+
+all:
+	$(CC) $(CFLAGS) src/$(TARGET).c -o bin/$(TARGET).elf
+
+clean:
+	rm bin/$(TARGET).elf
