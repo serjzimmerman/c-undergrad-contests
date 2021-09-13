@@ -1,0 +1,1 @@
+# mipt-vladimirov-contest
