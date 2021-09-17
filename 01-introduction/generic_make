@@ -1,6 +1,6 @@
 CC=gcc
 
-CFLAGS=-Wall -O2 -ansi -lm -g
+CFLAGS=-Wall -O2 -ansi -lm -g -pedantic
 
 TARGET=main
 
