@@ -1,7 +1,7 @@
 CC=gcc
 
 CFLAGS=-Wall -O2 -ansi -lm -g -pedantic
-
+CLANGF=-style='{BasedOnStyle: LLVM, IndentWidth: 2}'
 TARGET=main
 
 all:
@@ -9,3 +9,6 @@ all:
 
 clean:
 	rm bin/$(TARGET).elf
+
+clang-format:
+	clang-format $(CLANGF) -i --verbose src/$(TARGET).c
