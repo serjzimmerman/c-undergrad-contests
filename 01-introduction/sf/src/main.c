@@ -2,7 +2,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-/* Note[]: this is broken*/
 #define MEMO_SIZE 47u
 
 void swap(unsigned *x, unsigned *y) {
@@ -20,14 +19,13 @@ unsigned *fib_memo(unsigned *array, const unsigned size) {
   array[0] = 0;
   array[1] = 1;
 
-  while (i++ < size) {
+  while (++i < size) {
     array[i] = array[i - 1] + array[i - 2];
   }
 
   return array;
 }
 
-/* Note[]: memory access issues */
 char *fib_factor(char *factored, unsigned x) {
   unsigned memo[MEMO_SIZE], i, i_0 = MEMO_SIZE - 1;
 
