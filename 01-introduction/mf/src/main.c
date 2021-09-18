@@ -79,7 +79,8 @@ int main() {
   b = m2_pow_mod(a, n, m);
 
   for (i = 0; i < MATRIX_M2_SIZE * MATRIX_M2_SIZE; i++) {
-    printf(((i != MATRIX_M2_SIZE * MATRIX_M2_SIZE - 1) ? "%u " : "%u\n"), b.m2_array.m2_1d[i]);
+    printf(((i != MATRIX_M2_SIZE * MATRIX_M2_SIZE - 1) ? "%u " : "%u\n"),
+           b.m2_array.m2_1d[i]);
   }
 
   return 0;
