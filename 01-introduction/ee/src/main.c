@@ -14,7 +14,9 @@ void swap(int *x, int *y) {
   *y = temp;
 }
 
-int iabs(const int x) { return (x < 0) ? -x : x; }
+int iabs(const int x) {
+  return (x < 0) ? -x : x;
+}
 
 int eu_mod(int x, int y) {
   int r;
@@ -23,7 +25,9 @@ int eu_mod(int x, int y) {
 
   r = x % y;
 
-  if (r < 0) { r += iabs(y); }
+  if (r < 0) {
+    r += iabs(y);
+  }
 
   return r;
 }

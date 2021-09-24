@@ -4,7 +4,9 @@
 
 #define WTF_MIN 2l
 
-long iabs(long x) { return (x < 0) ? -x : x; }
+long iabs(long x) {
+  return (x < 0) ? -x : x;
+}
 
 long eu_mod(long x, long y) {
   long r;
@@ -13,7 +15,9 @@ long eu_mod(long x, long y) {
 
   r = x % y;
 
-  if (r < 0) { r += iabs(y); }
+  if (r < 0) {
+    r += iabs(y);
+  }
 
   return r;
 }

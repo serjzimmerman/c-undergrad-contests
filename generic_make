@@ -2,10 +2,11 @@ CC=gcc
 
 CFLAGS=-Wall -O2 -ansi -lm -g -pedantic
 CLANGF=-style='{BasedOnStyle: LLVM, IndentWidth: 2,\
-								AlignConsecutiveMacros: AcrossEmptyLinesAndComments,\
-								AllowShortBlocksOnASingleLine: Always,\
-								AllowShortIfStatementsOnASingleLine: Always}'
-								
+								AlignConsecutiveMacros: None,\
+								AllowShortBlocksOnASingleLine: Never,\
+								AllowShortIfStatementsOnASingleLine: Never,\
+								AllowShortFunctionsOnASingleLine: None}'
+
 TARGET=main
 
 all:
