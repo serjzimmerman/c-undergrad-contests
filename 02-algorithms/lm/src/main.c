@@ -2,6 +2,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#define WTF_MIN 2
+
 int iabs(int x) { return (x < 0) ? -x : x; }
 
 int eu_mod(int x, int y) {
@@ -31,17 +33,34 @@ int gcd(int x, int y) {
   return y;
 }
 
+int lcm(int x, int y) {
+  assert(x);
+  assert(y);
+
+  return (x * y) / gcd(x, y);
+}
+
+int wtf_function(int n) {
+  int min = WTF_MIN, acc = WTF_MIN;
+
+  while (min < n) {
+    acc = lcm(acc, ++min);
+  }
+
+  return acc;
+}
+
 int main() {
-  int x, y, g, res;
+  int x, g, res;
 
-  res = scanf("%d%d", &x, &y);
+  res = scanf("%d", &x);
 
-  if (res != 2 || y == 0) {
+  if (res != 1) {
     printf("%s\n", "Wrong input");
     abort();
   }
 
-  g = gcd(x, y);
+  g = wtf_function(x);
 
   printf("%d\n", g);
 
