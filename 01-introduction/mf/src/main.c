@@ -48,14 +48,10 @@ m2 m2_pow_mod(m2 x, unsigned n, unsigned m) {
 
   r = (i = m2_identity());
 
-  if (!n) {
-    return i;
-  }
+  if (!n) { return i; }
 
   while (n > 0) {
-    if (n % 2) {
-      r = m2_mult_mod(r, x, m);
-    }
+    if (n % 2) { r = m2_mult_mod(r, x, m); }
     x = m2_mult_mod(x, x, m);
     n = n / 2;
   }

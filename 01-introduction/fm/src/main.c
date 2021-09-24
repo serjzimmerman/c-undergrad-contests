@@ -13,9 +13,7 @@ void swap(unsigned *x, unsigned *y) {
 unsigned fib_modulo(unsigned x, unsigned n) {
   unsigned i, r, r_old, r_old_old, temp;
 
-  if (x < 2) {
-    return x;
-  }
+  if (x < 2) { return x; }
 
   r_old_old = 0;
   r_old = 1;

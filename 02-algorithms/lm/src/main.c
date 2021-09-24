@@ -2,26 +2,24 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#define WTF_MIN 2
+#define WTF_MIN 2l
 
-int iabs(int x) { return (x < 0) ? -x : x; }
+long iabs(long x) { return (x < 0) ? -x : x; }
 
-int eu_mod(int x, int y) {
-  int r;
+long eu_mod(long x, long y) {
+  long r;
 
   assert(y != 0);
 
   r = x % y;
 
-  if (r < 0) {
-    r += iabs(y);
-  }
+  if (r < 0) { r += iabs(y); }
 
   return r;
 }
 
-int gcd(int x, int y) {
-  int q;
+long gcd(long x, long y) {
+  long q;
 
   assert(y != 0);
 
@@ -33,15 +31,15 @@ int gcd(int x, int y) {
   return y;
 }
 
-int lcm(int x, int y) {
+long lcm(long x, long y) {
   assert(x);
   assert(y);
 
   return (x * y) / gcd(x, y);
 }
 
-int wtf_function(int n) {
-  int min = WTF_MIN, acc = WTF_MIN;
+long wtf_function(long n) {
+  long min = WTF_MIN, acc = WTF_MIN;
 
   while (min < n) {
     acc = lcm(acc, ++min);
@@ -51,9 +49,9 @@ int wtf_function(int n) {
 }
 
 int main() {
-  int x, g, res;
+  long int x, g, res;
 
-  res = scanf("%d", &x);
+  res = scanf("%ld", &x);
 
   if (res != 1) {
     printf("%s\n", "Wrong input");
@@ -62,7 +60,7 @@ int main() {
 
   g = wtf_function(x);
 
-  printf("%d\n", g);
+  printf("%ld\n", g);
 
   return 0;
 }

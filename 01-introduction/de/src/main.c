@@ -3,7 +3,7 @@
 #include <stdlib.h>
 
 #define DIOPHANTINE_SOL_NONE -1
-#define DIOPHANTINE_SOL_INF 1
+#define DIOPHANTINE_SOL_INF  1
 
 struct ExtendedGcd {
   int a, b, g;
@@ -31,9 +31,7 @@ int eu_mod(int x, int y) {
 
   r = x % y;
 
-  if (r < 0) {
-    r += iabs(y);
-  }
+  if (r < 0) { r += iabs(y); }
 
   return r;
 }
