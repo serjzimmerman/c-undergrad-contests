@@ -23,9 +23,7 @@ int eu_mod(int x, int y) {
 
   r = x % y;
 
-  if (r < 0) {
-    r += iabs(y);
-  }
+  if (r < 0) { r += iabs(y); }
 
   return r;
 }

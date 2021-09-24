@@ -28,9 +28,7 @@ unsigned long get_pp(unsigned long n) {
     swap(&temp, &r_old);
     r_old_old = r;
 
-    if (r_old == 0 && r == 1) {
-      return i;
-    }
+    if (r_old == 0 && r == 1) { return i; }
   }
 }
 
