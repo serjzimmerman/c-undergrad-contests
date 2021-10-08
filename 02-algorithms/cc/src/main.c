@@ -121,7 +121,7 @@ int is_circular_prime(struct sieve_t *sv, int n) {
 
 int closest_circular_prime(struct sieve_t *sv, int n) {
   int pos = n, neg = n, is_pos, is_neg;
-  for (; ; ) {
+  for (;;) {
     if (pos < (sv->n * CHAR_BIT - 1)) {
       if ((is_pos = is_circular_prime(sv, ++pos))) {
         /* printf("pos = %d, is circular = %d", pos, is_pos); */
