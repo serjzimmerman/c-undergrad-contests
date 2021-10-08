@@ -1,12 +1,55 @@
 #include <assert.h>
 #include <inttypes.h>
+#include <limits.h>
+#include <malloc.h>
+#include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
 
 #define USE_BUILTIN_CTZ
-
+#define SIEVE_BIT 8
 #define min(x, y) (x > y ? y : x)
+
+struct sieve_t {
+  int n;
+  uint8_t *s;
+};
+
+uint8_t uint8_array_get_bit(uint8_t *s, uint64_t n) {
+  return ((s[n / SIEVE_BIT] >> (n % SIEVE_BIT)) & 1);
+}
+
+void uint8_array_set_bit(uint8_t *s, uint64_t n) {
+  s[n / SIEVE_BIT] |= (1 << (n % SIEVE_BIT));
+}
+
+void fill_sieve(struct sieve_t *sv) {
+  int i, c;
+
+  for (c = 2; c < sqrt(sv->n * SIEVE_BIT); c++) {
+    if (!uint8_array_get_bit(sv->s, c)) {
+      for (i = 2 * c; i < sv->n * SIEVE_BIT; i += c) {
+        uint8_array_set_bit(sv->s, i);
+      }
+    }
+  }
+}
+
+int is_prime(struct sieve_t *sv, uint64_t n) {
+  return !(uint8_array_get_bit(sv->s, n));
+}
+
+struct sieve_t *init_sieve(int n) {
+  struct sieve_t *r;
+
+  r = (struct sieve_t *)malloc(sizeof(struct sieve_t));
+
+  r->n = n;
+  r->s = (uint8_t *)calloc(1, sizeof(uint8_t) * n);
+
+  return r;
+}
 
 void swap_uint64(uint64_t *a, uint64_t *b) {
   uint64_t temp;
@@ -161,20 +204,56 @@ uint8_t fermat_primality_test(uint64_t p, uint32_t i) {
   return 1;
 }
 
+#define SIEVE_SIZE 200000
+#define MAX_SEARCH (1ull << 60)
+
+uint64_t max_pf(uint8_t k, uint8_t n) {
+  struct sieve_t *r;
+  uint64_t max = 0, s = 1, s_prev = 1, s_prev_prev = 0, temp;
+
+  s = k * s_prev + n * s_prev_prev;
+
+  r = init_sieve(SIEVE_SIZE);
+  fill_sieve(r);
+
+  if (binary_gcd(k, n) != 1) {
+    if (is_prime(r, s)) {
+      return s;
+    }
+    return 0;
+  }
+
+  while (s < MAX_SEARCH) {
+    if (s < SIEVE_SIZE * SIEVE_BIT) {
+      if (is_prime(r, s)) {
+        max = s;
+      }
+    } else if (fermat_primality_test(s, 200)) {
+      max = s;
+    }
+    temp = s;
+    s = k * s + n * s_prev;
+    s_prev_prev = s_prev;
+    s_prev = temp;
+  }
+
+  return max;
+}
+
 int main() {
   int res;
-  uint64_t x;
+  uint8_t k, n;
 
-  res = scanf("%" PRIu64, &x);
+  res = scanf("%hhu%hhu", &k, &n);
 
-  if (res != 1) {
+  if (res != 2) {
     printf("%s\n", "Wrong input");
     abort();
   }
 
   srand(time(NULL));
 
-  printf("%d\n", fermat_primality_test(x, 10000));
+  printf("%" PRIu64 "\n", max_pf(k, n));
 
   return 0;
 }
