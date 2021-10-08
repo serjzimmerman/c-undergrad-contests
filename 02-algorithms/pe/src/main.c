@@ -1,9 +1,9 @@
 #include <assert.h>
+#include <limits.h>
 #include <malloc.h>
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <limits.h>
 
 struct sieve_t {
   int n;
