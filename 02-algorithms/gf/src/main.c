@@ -7,7 +7,11 @@
 
 struct sieve_t {
   int n;
-  unsigned char *s;
+  char *s;
+};
+
+struct sequence_t {
+  int a, b, n;
 };
 
 char char_array_get_bit(char *s, int n) {
@@ -65,31 +69,50 @@ void free_sieve(struct sieve_t *sv) {
   free(sv);
 }
 
+struct sequence_t get_largest_sequence(struct sieve_t *sv, int n) {
+  struct sequence_t current_sequence = {0}, max_sequence = {0};
+  int temp;
+
+  for (current_sequence.a = -n + 1; current_sequence.a < n; current_sequence.a++) {
+    for (current_sequence.b = -n + 1; current_sequence.b < n; current_sequence.b++) {
+      current_sequence.n = 0;
+      while ((temp = current_sequence.n * current_sequence.n + current_sequence.a * current_sequence.n + current_sequence.b) > 0 && is_prime(sv, temp)) {
+        current_sequence.n++;
+      }
+      if (current_sequence.n > max_sequence.n) {
+        max_sequence.n = current_sequence.n;
+        max_sequence.a = current_sequence.a;
+        max_sequence.b = current_sequence.b;
+      }
+    }
+  }
+
+  return max_sequence;
+}
 
 int main() {
-  int x, y, g, res, n;
+  int x, res;
+  struct sieve_t *r;
+  struct sequence_t max;
 
-  res = scanf("%d %d", &x, &y);
+  res = scanf("%d", &x);
 
-  if (res != 2) {
+  if (res != 1) {
     printf("%s\n", "Wrong input");
     abort();
   }
 
-  struct sieve_t *r;
-
-  r = init_sieve(x);
+  r = init_sieve(10000000);
   fill_sieve(r);
 
-  n = nth_prime(r, y);
+  max = get_largest_sequence(r, x);
 
   /* for (g = 1; g < r->n; g++) {
     printf("%d: %d\n", g, r->s[g]);
   } */
 
-  printf("%d\n", n);
+  printf("%d %d %d\n", max.a, max.b, max.n);
 
-  free(r);
-  
+  free_sieve(r);
   return 0;
 }
