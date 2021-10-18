@@ -1,6 +1,7 @@
 #include <assert.h>
 #include <malloc.h>
 #include <stdio.h>
+#include <stdlib.h>
 
 typedef struct {
   int *coefficients;
@@ -10,10 +11,15 @@ typedef struct {
 polynomial *polynomial_init(int len) {
   polynomial *new;
 
-  new = (polynomial *)malloc(sizeof(polynomial));
+  if (!(new = (polynomial *)malloc(sizeof(polynomial)))) {
+    abort();
+  }
 
   new->len = len;
-  new->coefficients = (int *)calloc(len, sizeof(int));
+
+  if (!(new->coefficients = (int *)calloc(len, sizeof(int)))) {
+    abort();
+  }
 
   return new;
 }
@@ -33,24 +39,6 @@ polynomial *polynomial_create(int *array, int len) {
 void polynomial_free(polynomial *poly) {
   free(poly->coefficients);
   free(poly);
-}
-
-void polynomial_sum(polynomial *a, polynomial *b) {
-  int i;
-
-  if (a->len < b->len) {
-    a->coefficients = (int *)realloc(a->coefficients, b->len * sizeof(int));
-  }
-
-  for (i = 0; i < a->len; i++) {
-    a->coefficients[i] += b->coefficients[i];
-  }
-
-  for (i = a->len; i < b->len; i++) {
-    a->coefficients[i] = b->coefficients[i];
-  }
-
-  a->len = b->len;
 }
 
 polynomial *polynomial_mul(polynomial *a, polynomial *b) {
