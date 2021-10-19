@@ -3,13 +3,14 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <pthread.h>
 
 typedef struct {
   int *coefficients;
   int len;
 } polynomial;
 
-polynomial *polynomial_init(int len) {
+polynomial *polynomial_init_calloc(int len) {
   polynomial *new;
 
   if (!(new = (polynomial *)malloc(sizeof(polynomial)))) {
@@ -25,14 +26,41 @@ polynomial *polynomial_init(int len) {
   return new;
 }
 
+polynomial *polynomial_init_malloc(int len) {
+  polynomial *new;
+
+  if (!(new = (polynomial *)malloc(sizeof(polynomial)))) {
+    abort();
+  }
+
+  new->len = len;
+
+  if (!(new->coefficients = (int *)malloc(len * sizeof(int)))) {
+    abort();
+  }
+
+  return new;
+}
+
 polynomial *polynomial_create(int *array, int len) {
   int i;
 
-  polynomial *poly = polynomial_init(len);
+  polynomial *poly = polynomial_init_malloc(len);
 
   for (i = 0; i < poly->len; i++) {
     poly->coefficients[i] = array[i];
   }
+
+  return poly;
+}
+
+polynomial *polynomial_copy(polynomial *copy_from) {
+  int i;
+
+  polynomial *poly = malloc(sizeof(polynomial));
+
+  poly->coefficients = copy_from->coefficients;
+  poly->len = copy_from->len;
 
   return poly;
 }
@@ -42,122 +70,137 @@ void polynomial_free(polynomial *poly) {
   free(poly);
 }
 
-polynomial *polynomial_mul_pow_x(polynomial *a, int pow) {
-  int i, *temp;
-
-  temp = malloc((a->len) * sizeof(int));
-  memcpy(temp, a->coefficients, a->len * sizeof(int));
-
-  a->coefficients = realloc(a->coefficients, (a->len + pow) * sizeof(int));
-  
-  for (i = 0; i < a->len; i++) {
-    a->coefficients[i + pow] = temp[i];
-  }
-
-  for (i = 0; i < pow; i++) {
-    a->coefficients[i] = 0;
-  }
-  
-  a->len = a->len + pow;
-  
-  free(temp);
-
-  return a;
-}
-
 void polynomial_split_half(polynomial *a, polynomial *a0, polynomial *a1) {
   int i;
 
   a0->coefficients = &a->coefficients[0];
-  a1->coefficients = &a->coefficients[a->len / 2];
+  a1->coefficients = &a->coefficients[a->len >> 1];
 
-  a0->len = a->len / 2;
-  a1->len = a->len / 2;
+  a0->len = a->len >> 1;
+  a1->len = a->len >> 1;
 }
 
-polynomial *polynomial_sum(polynomial *a, polynomial *b) {
-  int i;
-
-  if (a->len < b->len) { 
-    a->coefficients = realloc(a->coefficients, (b->len) * sizeof(int));
-    for (i = 0; i < a->len; i++) {
-      a->coefficients[i] = a->coefficients[i] + b->coefficients[i];
-    }
-    for (i = a->len; i < b->len; i++) {
-      a->coefficients[i] = b->coefficients[i];
-    }
-    a->len = b->len;
-  } else { 
-    for (i = 0; i < b->len; i++) {
-      a->coefficients[i] = a->coefficients[i] + b->coefficients[i];
-    }
-  }
-
-  return a;
-}
-
-void polynomial_sum_to(polynomial *r, polynomial *a, polynomial *b) {
-  polynomial_sum(r, a);
-  polynomial_sum(r, b);
-}
-
-polynomial *polynomial_diff(polynomial *a, polynomial *b) {
+void polynomial_sum_of_two(polynomial *r, polynomial *a, polynomial *b) {
   int i;
   
-  if (a->len < b->len) { 
-    a->coefficients = realloc(a->coefficients, (b->len) * sizeof(int));
-    for (i = 0; i < a->len; i++) {
-      a->coefficients[i] = a->coefficients[i] - b->coefficients[i];
-    }
-    for (i = a->len; i < b->len; i++) {
-      a->coefficients[i] = -b->coefficients[i];
-    }
-    a->len = b->len;
-  } else { 
-    for (i = 0; i < b->len; i++) {
-      a->coefficients[i] = a->coefficients[i] - b->coefficients[i];
-    }
+  assert(r->len == a->len);
+  assert(a->len == b->len);
+  
+  for (i = 0; i < a->len; i++) {
+    r->coefficients[i] = a->coefficients[i] + b->coefficients[i];
   }
-
-  return a;
 }
 
-polynomial *polynomial_mul_karatsuba(polynomial *a, polynomial *b) {
-  polynomial *r, a1, a0, b1, b0, *a0b0, *a1b1, *mul, *suma, *sumb;
+void polynomial_sum_of_two_double(polynomial *r1, polynomial *a1, polynomial *b1, polynomial *r2, polynomial *a2, polynomial *b2) {
+  int i;
+  
+  assert(r1->len == a1->len);
+  assert(a1->len == b1->len);
+  assert(a1->len == b2->len);
+  assert(r2->len == a2->len);
+  assert(a2->len == b2->len);
+  
+  for (i = 0; i < a1->len; i++) {
+    r1->coefficients[i] = a1->coefficients[i] + b1->coefficients[i];
+    r2->coefficients[i] = a2->coefficients[i] + b2->coefficients[i];
+  }
+}
+
+void polynomial_sum_to_one(polynomial *r, polynomial *a) {
+  int i;
+  
+  assert(r->len == a->len);
+  
+  for (i = 0; i < a->len; i++) {
+    r->coefficients[i] += a->coefficients[i];
+  }
+}
+
+void polynomial_diff_from_two(polynomial *r, polynomial *a, polynomial *b) {
+  int i;
+  
+  assert(r->len == a->len);
+  assert(a->len == b->len);
+  
+  for (i = 0; i < a->len; i++) {
+    r->coefficients[i] -= a->coefficients[i] + b->coefficients[i];
+  }
+}
+
+void polynomial_diff_from_one(polynomial *r, polynomial *a) {
+  int i;
+  
+  assert(r->len == a->len);
+  
+  for (i = 0; i < a->len; i++) {
+    r->coefficients[i] -= a->coefficients[i];
+  }
+}
+
+polynomial *temp_data (int n, polynomial *suma, polynomial *sumb, polynomial *mul, polynomial *temp) {
+  /* temp = polynomial_init_malloc(n << 2); */
+
+  suma->len = n;
+  sumb->len = n;
+
+  suma->coefficients = &temp->coefficients[0];
+  sumb->coefficients = &temp->coefficients[n];
+
+  mul->len = n << 1;
+  mul->coefficients = &temp->coefficients[n << 1];
+  /* memset(mul->coefficients, 0, (n << 1) * sizeof(int)); */
+
+  return temp;
+}
+
+void *polynomial_mul_karatsuba_impl(polynomial *r, polynomial *a, polynomial *b, polynomial *temp) {
+  polynomial a1, a0, b1, b0, a0b0, a1b1, mul, suma, sumb, middle;
 
   if (a->len == 1) {
-    r = polynomial_init(a->len);
-
     r->coefficients[0] = a->coefficients[0] * b->coefficients[0];
-    
-    return r;
+    return;
   }
 
   /* Check whether a->len == b->len && a->len = 2^x */
 
   polynomial_split_half(a, &a0, &a1);
   polynomial_split_half(b, &b0, &b1);
+  polynomial_split_half(r, &a0b0, &a1b1);
 
-  a0b0 = polynomial_mul_karatsuba(&a0, &b0);
-  a1b1 = polynomial_mul_karatsuba(&a1, &b1);
+  polynomial_mul_karatsuba_impl(&a0b0, &a0, &b0, temp);
+  polynomial_mul_karatsuba_impl(&a1b1, &a1, &b1, temp);
 
-  suma = polynomial_init(a0.len);
-  sumb = polynomial_init(b0.len);
+  temp = temp_data(a0.len, &suma, &sumb, &mul, temp);
+  temp->coefficients = &mul.coefficients[a->len];
 
-  polynomial_sum_to(suma, &a0, &a1);
-  polynomial_sum_to(sumb, &b0, &b1);
+  polynomial_sum_of_two_double(&sumb, &b0, &b1, &suma, &a0, &a1);
+  polynomial_mul_karatsuba_impl(&mul, &suma, &sumb, temp);
 
-  mul = polynomial_mul_karatsuba(suma, sumb);
+  middle.coefficients = &(r->coefficients[a0.len]);
+  middle.len = a->len;
 
-  polynomial_mul_pow_x(polynomial_diff(polynomial_diff(mul, a1b1), a0b0), a->len / 2);
-  polynomial_mul_pow_x(a1b1, a->len);
+  polynomial_diff_from_two(&mul, &a0b0, &a1b1);
+  polynomial_sum_to_one(&middle, &mul);
+  /* polynomial_free(temp); */
 
-  r = polynomial_sum(polynomial_sum(a1b1, a0b0), mul);
+  temp->coefficients -= (a->len << 1);
+  memset(temp->coefficients, 0, (a->len << 1) * sizeof(int));
+}
 
-  polynomial_free(suma);
-  polynomial_free(sumb);
-  polynomial_free(a0b0);
-  polynomial_free(mul);
+polynomial *polynomial_mul_karatsuba(polynomial *a, polynomial *b) {
+  polynomial *r, *temp, *old;
+
+  r = polynomial_init_calloc(a->len + b->len);
+
+  /* Approximate maximum memory usage instead of a magic number */
+
+  temp = polynomial_init_calloc(1000000);
+  old = polynomial_copy(temp);
+
+  polynomial_mul_karatsuba_impl(r, a, b, temp);
+
+  polynomial_free(old);
+  free(temp);
 
   return r;
 }
@@ -172,6 +215,7 @@ void polynomial_print(polynomial *a) {
   for (i = 0; i <= j; i++) {
     printf("%d ", a->coefficients[i]);
   }
+
   printf("\n");
 }
 
@@ -191,19 +235,24 @@ int main() {
     scanf("%d", &array2[i]);
   }
 
-  p1 = polynomial_create(&array1[0], n);
-  p2 = polynomial_create(&array2[0], m);
+  p1 = malloc(sizeof(polynomial));
+  p2 = malloc(sizeof(polynomial));
 
-  free(array1);
-  free(array2);
+  p1->len = n;
+  p2->len = m;
+  p1->coefficients = array1;
+  p2->coefficients = array2;
 
   p3 = polynomial_mul_karatsuba(p1, p2);
 
   polynomial_print(p3);
 
-  polynomial_free(p1);
-  polynomial_free(p2);
   polynomial_free(p3);
   
+  free(p1);
+  free(p2);
+  free(array1);
+  free(array2);
+
   return 0;
 }
