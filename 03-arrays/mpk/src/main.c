@@ -119,6 +119,7 @@ void polynomial_diff_from_one(polynomial *r, polynomial *a) {
 polynomial *temp_data (int n, polynomial *suma, polynomial *sumb, polynomial *mul, polynomial *temp) {
   /* temp = polynomial_init_malloc(n << 2); */
 
+  /* Abort if the is no space left */
   if (temp->len < (n << 2)) {
     abort();
   }
@@ -135,7 +136,7 @@ polynomial *temp_data (int n, polynomial *suma, polynomial *sumb, polynomial *mu
   return temp;
 }
 
-/* Works only for polynomial of equal size 2^n */
+/* Works only for polynomial of equal size 2^k */
 void *polynomial_mul_karatsuba_impl(polynomial *r, polynomial *a, polynomial *b, polynomial *temp) {
   polynomial a1, a0, b1, b0, a0b0, a1b1, mul, suma, sumb, middle;
 
@@ -145,20 +146,22 @@ void *polynomial_mul_karatsuba_impl(polynomial *r, polynomial *a, polynomial *b,
     return;
   } */
 
+  /* Hardcoded basecase of n = 2 reduces the number of recursive calls */
   if (a->len == 2) {
     r->coefficients[0] = a->coefficients[0] * b->coefficients[0];
     r->coefficients[1] = a->coefficients[0] * b->coefficients[1] + a->coefficients[1] * b->coefficients[0];;
     r->coefficients[2] = a->coefficients[1] * b->coefficients[1];
+    /* Necessary to set to 0 because heap contains junk from previous function calls */
     r->coefficients[3] = 0;
     return;
   }
 
   /* Check whether a->len == b->len && a->len = 2^x */
-
   polynomial_split_half(a, &a0, &a1);
   polynomial_split_half(b, &b0, &b1);
   polynomial_split_half(r, &a0b0, &a1b1);
 
+  /* Heap memory is necessary */
   polynomial_mul_karatsuba_impl(&a0b0, &a0, &b0, temp);
   polynomial_mul_karatsuba_impl(&a1b1, &a1, &b1, temp);
 
