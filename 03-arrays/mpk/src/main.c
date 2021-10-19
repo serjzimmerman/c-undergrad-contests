@@ -3,7 +3,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <pthread.h>
 
 typedef struct {
   int *coefficients;
@@ -55,8 +54,6 @@ polynomial *polynomial_create(int *array, int len) {
 }
 
 polynomial *polynomial_copy(polynomial *copy_from) {
-  int i;
-
   polynomial *poly = malloc(sizeof(polynomial));
 
   poly->coefficients = copy_from->coefficients;
@@ -135,9 +132,6 @@ polynomial *temp_data (int n, polynomial *suma, polynomial *sumb, polynomial *mu
   mul->len = n << 1;
   mul->coefficients = &temp->coefficients[n << 1];
 
-  temp->coefficients = mul->coefficients[n << 1];
-  temp->len -= n << 2;
-
   return temp;
 }
 
@@ -171,6 +165,7 @@ void *polynomial_mul_karatsuba_impl(polynomial *r, polynomial *a, polynomial *b,
   /* This is a sort of "stack" to avoid multiple allocation calls */
   temp = temp_data(a0.len, &suma, &sumb, &mul, temp);
   temp->coefficients = &mul.coefficients[a->len];
+  temp->len -= a->len << 1;
 
   polynomial_sum_of_two_double(&sumb, &b0, &b1, &suma, &a0, &a1);
   polynomial_mul_karatsuba_impl(&mul, &suma, &sumb, temp);
