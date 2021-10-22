@@ -33,17 +33,6 @@ void *cbsearch(const void *key, const void *base, int num, int size, cmp_t cmp) 
   return NULL;
 }
 
-
-void print_array(const int * const arr, const int len) {
-  int i;
-
-  for (i = 0; i < len; i++) {
-    printf("%d ", arr[i]);
-  }
-
-  printf("\n");
-}
-
 int cmp_int(const void *x, const void *y) {
   return *(int *)x - *(int *)y;
 }
