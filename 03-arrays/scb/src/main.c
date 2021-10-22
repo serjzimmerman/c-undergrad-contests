@@ -1,11 +1,12 @@
 #include <assert.h>
+#include <malloc.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <malloc.h>
 
 typedef int (*cmp_t)(const void *lhs, const void *rhs);
 
-void *cbsearch(const void *key, const void *base, int num, int size, cmp_t cmp) {
+void *cbsearch(const void *key, const void *base, int num, int size,
+               cmp_t cmp) {
   char *low, *high, *mid;
   int r;
 
@@ -14,7 +15,7 @@ void *cbsearch(const void *key, const void *base, int num, int size, cmp_t cmp) 
 
   while (high != low) {
     mid = low + ((high - low) / size + 1) / 2 * size;
-    
+
     r = cmp(mid, key);
 
     if (r == 0) {
@@ -43,6 +44,7 @@ int main() {
 
   cmp_t cmp_i = &cmp_int;
 
-  r = (int *)cbsearch(&s, &array, sizeof(array) / sizeof(int), sizeof(int), cmp_i);
+  r = (int *)cbsearch(&s, &array, sizeof(array) / sizeof(int), sizeof(int),
+                      cmp_i);
   printf("%d\n", *r);
 }

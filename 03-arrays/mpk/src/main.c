@@ -77,15 +77,17 @@ void polynomial_split_half(polynomial *a, polynomial *a0, polynomial *a1) {
 
 void polynomial_sum_of_two(polynomial *r, polynomial *a, polynomial *b) {
   int i;
-  
+
   for (i = 0; i < a->len; i++) {
     r->coefficients[i] = a->coefficients[i] + b->coefficients[i];
   }
 }
 
-void polynomial_sum_of_two_double(polynomial *r1, polynomial *a1, polynomial *b1, polynomial *r2, polynomial *a2, polynomial *b2) {
+void polynomial_sum_of_two_double(polynomial *r1, polynomial *a1,
+                                  polynomial *b1, polynomial *r2,
+                                  polynomial *a2, polynomial *b2) {
   int i;
-  
+
   for (i = 0; i < a1->len; i++) {
     r1->coefficients[i] = a1->coefficients[i] + b1->coefficients[i];
     r2->coefficients[i] = a2->coefficients[i] + b2->coefficients[i];
@@ -94,7 +96,7 @@ void polynomial_sum_of_two_double(polynomial *r1, polynomial *a1, polynomial *b1
 
 void polynomial_sum_to_one(polynomial *r, polynomial *a) {
   int i;
-  
+
   for (i = 0; i < a->len; i++) {
     r->coefficients[i] += a->coefficients[i];
   }
@@ -102,7 +104,7 @@ void polynomial_sum_to_one(polynomial *r, polynomial *a) {
 
 void polynomial_diff_from_two(polynomial *r, polynomial *a, polynomial *b) {
   int i;
-  
+
   for (i = 0; i < a->len; i++) {
     r->coefficients[i] -= a->coefficients[i] + b->coefficients[i];
   }
@@ -110,13 +112,14 @@ void polynomial_diff_from_two(polynomial *r, polynomial *a, polynomial *b) {
 
 void polynomial_diff_from_one(polynomial *r, polynomial *a) {
   int i;
-  
+
   for (i = 0; i < a->len; i++) {
     r->coefficients[i] -= a->coefficients[i];
   }
 }
 
-polynomial *temp_data (int n, polynomial *suma, polynomial *sumb, polynomial *mul, polynomial *temp) {
+polynomial *temp_data(int n, polynomial *suma, polynomial *sumb,
+                      polynomial *mul, polynomial *temp) {
   /* temp = polynomial_init_malloc(n << 2); */
 
   /* Abort if the is no space left */
@@ -137,7 +140,8 @@ polynomial *temp_data (int n, polynomial *suma, polynomial *sumb, polynomial *mu
 }
 
 /* Works only for polynomial of equal size 2^k */
-void *polynomial_mul_karatsuba_impl(polynomial *r, polynomial *a, polynomial *b, polynomial *temp) {
+void *polynomial_mul_karatsuba_impl(polynomial *r, polynomial *a, polynomial *b,
+                                    polynomial *temp) {
   polynomial a1, a0, b1, b0, a0b0, a1b1, mul, suma, sumb, middle;
 
   /* if (a->len == 1) {
@@ -149,9 +153,12 @@ void *polynomial_mul_karatsuba_impl(polynomial *r, polynomial *a, polynomial *b,
   /* Hardcoded basecase of n = 2 reduces the number of recursive calls */
   if (a->len == 2) {
     r->coefficients[0] = a->coefficients[0] * b->coefficients[0];
-    r->coefficients[1] = a->coefficients[0] * b->coefficients[1] + a->coefficients[1] * b->coefficients[0];;
+    r->coefficients[1] = a->coefficients[0] * b->coefficients[1] +
+                         a->coefficients[1] * b->coefficients[0];
+    ;
     r->coefficients[2] = a->coefficients[1] * b->coefficients[1];
-    /* Necessary to set to 0 because heap contains junk from previous function calls */
+    /* Necessary to set to 0 because heap contains junk from previous function
+     * calls */
     r->coefficients[3] = 0;
     return;
   }
@@ -244,7 +251,7 @@ int main() {
 
   polynomial_print(p3);
   polynomial_free(p3);
-  
+
   free(p1);
   free(p2);
   free(array1);

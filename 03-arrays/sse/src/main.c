@@ -1,7 +1,7 @@
 #include <assert.h>
+#include <malloc.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <malloc.h>
 
 void swap_int(int *x, int *y) {
   int temp;
@@ -10,11 +10,11 @@ void swap_int(int *x, int *y) {
   *y = temp;
 }
 
-void selection_sort_iteration(int * const arr, const int len, const int last) {
+void selection_sort_iteration(int *const arr, const int len, const int last) {
   int i, min;
-  
+
   min = last;
-  
+
   for (i = last; i < len; i++) {
     if (arr[i] < arr[min]) {
       min = i;
@@ -24,7 +24,7 @@ void selection_sort_iteration(int * const arr, const int len, const int last) {
   swap_int(&arr[last], &arr[min]);
 }
 
-void print_array(const int * const arr, const int len) {
+void print_array(const int *const arr, const int len) {
   int i;
 
   for (i = 0; i < len; i++) {

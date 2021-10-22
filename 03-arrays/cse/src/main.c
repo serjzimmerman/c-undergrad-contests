@@ -1,7 +1,7 @@
 #include <assert.h>
+#include <malloc.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <malloc.h>
 
 typedef int (*cmp_t)(const void *lhs, const void *rhs);
 
@@ -19,7 +19,7 @@ void swap(void *x, void *y, int eltsize) {
 int selstep(void *parr, int eltsize, int numelts, int nsorted, cmp_t cmp) {
   char *i, *min, *last;
 
-  min = last = (char *)parr + nsorted  * eltsize;
+  min = last = (char *)parr + nsorted * eltsize;
 
   for (i = last; i - (char *)parr < numelts * eltsize; i += eltsize) {
     if (cmp(i, min) == 1) {
@@ -37,7 +37,7 @@ int cmp_int(const void *x, const void *y) {
   return (*(int *)x < *(int *)y ? 1 : 0);
 }
 
-void print_array(const int * const arr, const int len) {
+void print_array(const int *const arr, const int len) {
   int i;
 
   for (i = 0; i < len; i++) {

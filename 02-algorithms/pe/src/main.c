@@ -65,7 +65,6 @@ void free_sieve(struct sieve_t *sv) {
   free(sv);
 }
 
-
 int main() {
   int x, y, g, res, n;
 
@@ -90,6 +89,6 @@ int main() {
   printf("%d\n", n);
 
   free(r);
-  
+
   return 0;
 }
