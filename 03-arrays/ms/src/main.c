@@ -1,7 +1,7 @@
 #include <assert.h>
+#include <malloc.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <malloc.h>
 
 void merge(int *arr, int l, int m, int r);
 
@@ -16,7 +16,7 @@ void merge_sort_imp(int *arr, int l, int r) {
 
   merge_sort_imp(arr, l, m);
   merge_sort_imp(arr, m + 1, r);
-  
+
   merge(arr, l, m, r);
 }
 
@@ -56,7 +56,7 @@ void merge(int *arr, int l, int m, int r) {
   free(t);
 }
 
-void print_array(const int * const arr, const int len) {
+void print_array(const int *const arr, const int len) {
   int i;
 
   for (i = 0; i < len; i++) {
@@ -65,7 +65,6 @@ void print_array(const int * const arr, const int len) {
 
   printf("\n");
 }
-
 
 int main() {
   int i, len, *array;
