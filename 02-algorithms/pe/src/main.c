@@ -1,6 +1,6 @@
 #include <assert.h>
 #include <limits.h>
-#include <malloc.h>
+#include <stdlib.h>
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>

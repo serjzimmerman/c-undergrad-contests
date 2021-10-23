@@ -1,7 +1,6 @@
 #include <assert.h>
-#include <malloc.h>
-#include <stdio.h>
 #include <stdlib.h>
+#include <stdio.h>
 
 typedef int (*cmp_t)(const void *lhs, const void *rhs);
 

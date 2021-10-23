@@ -1,7 +1,6 @@
 #include <assert.h>
-#include <malloc.h>
-#include <stdio.h>
 #include <stdlib.h>
+#include <stdio.h>
 
 void swap_int(int *x, int *y) {
   int temp;
