@@ -1,6 +1,6 @@
 #include <assert.h>
-#include <stdlib.h>
 #include <stddef.h>
+#include <stdlib.h>
 #include <string.h>
 
 typedef struct Node {
@@ -22,12 +22,9 @@ typedef int (*xcmp_t)(void *lhs, int lsz, void *rhs, int rsz);
 node node_init() {
   node newnode;
 
-  if (!(newnode = (node)malloc(sizeof(struct Node)))) {
+  if (!(newnode = (node)calloc(1, sizeof(struct Node)))) {
     return NULL;
   }
-
-  newnode->data = NULL;
-  newnode->next = NULL;
 
   return newnode;
 }
@@ -35,12 +32,9 @@ node node_init() {
 linkedlist linkedlist_init() {
   linkedlist newlist;
 
-  if (!(newlist = (linkedlist)malloc(sizeof(struct LinkedList)))) {
+  if (!(newlist = (linkedlist)calloc(1, sizeof(struct LinkedList)))) {
     return NULL;
   }
-
-  newlist->first = NULL;
-  newlist->last = NULL;
 
   return newlist;
 }
@@ -65,21 +59,6 @@ int _linkedlist_pre_append_push(linkedlist list, node *newnode, void *ptr) {
     list->first = *newnode;
     list->last = *newnode;
     return 0;
-  }
-
-  return 0;
-}
-
-int linkedlist_push(linkedlist list, void *ptr) {
-  node newnode = NULL;
-
-  if (_linkedlist_pre_append_push(list, &newnode, ptr) != 0) {
-    return -1;
-  }
-
-  if (newnode != list->first) {
-    newnode->next = list->first;
-    list->first = newnode;
   }
 
   return 0;
@@ -244,8 +223,12 @@ linkedlist list_from_mem(void *mem, int *sizes, int nelts) {
 
   for (i = 0; i < nelts; i++) {
     t = init_data(curr, sizes[i]);
+
     curr += sizes[i];
-    linkedlist_append(list, t);
+
+    if (linkedlist_append(list, t)) {
+      abort();
+    }
   }
 
   return list;
@@ -330,7 +313,6 @@ void xmsort(void *mem, int *sizes, int nelts, xcmp_t cmp) {
 }
 
 int main() {
-  linkedlist list;
   xcmp_t cmp;
 
   int array[] = {3, 10, 5, 20, 40, 100, 59, 123};
@@ -338,5 +320,7 @@ int main() {
 
   cmp = my_cmp;
 
-  xmsort(&array[0], &sizes[0], 1, cmp);
+  xmsort(&array[0], &sizes[0], 8, cmp);
+
+  return 0;
 }
