@@ -8,7 +8,7 @@ int get_string_sum(char *string) {
   int sum = 0;
 
   while (*string != '\0') {
-    sum += *string++; 
+    sum += *string++;
   }
 
   return sum;

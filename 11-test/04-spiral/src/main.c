@@ -17,7 +17,7 @@ unsigned long long spiral(int n) {
 
 int main() {
   int n;
-  
+
   scanf("%d", &n);
 
   printf("%llu\n", spiral(n));

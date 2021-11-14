@@ -160,7 +160,7 @@ node _merge_sorted_lists(node a, node b, int (*cmp_func)(void *a, void *b)) {
 
 node _node_merge_sort(node head_ref, int (*cmp_func)(void *a, void *b)) {
   node middle_node, left_node, right_node;
-  
+
   if (!head_ref || !(head_ref->next)) {
     return head_ref;
   }
@@ -180,7 +180,8 @@ void linkedlist_merge_sort(linkedlist list, int (*cmp_func)(void *a, void *b)) {
   list->first = _node_merge_sort(list->first, cmp_func);
 }
 
-void linkedlist_iterate_over_nodes(linkedlist list, void (*callback)(node node_to_iterate)) {
+void linkedlist_iterate_over_nodes(linkedlist list,
+                                   void (*callback)(node node_to_iterate)) {
   node current_node;
 
   current_node = list->first;
@@ -263,12 +264,12 @@ data_t *read_data_array(int n) {
 
 void print_callback(node iter) {
   int i;
-  
+
   printf("%d ", ((data_t)iter->data)->len);
 
   for (i = 0; i < ((data_t)iter->data)->len; i++) {
     printf("%d ", ((data_t)iter->data)->array[i]);
-  } 
+  }
 
   printf("\n");
 }

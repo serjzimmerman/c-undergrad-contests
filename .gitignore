@@ -1,6 +1,4 @@
 # Ignore compiled binaries
 **/*.elf
-# Ignore bash scripts
-**/*.sh
 # Ignore vscode junk
 .vscode
