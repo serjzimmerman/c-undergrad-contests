@@ -3,4 +3,5 @@ set(LIB_SOURCES
 )
 
 add_library(polynomial STATIC ${LIB_SOURCES})
-target_include_directories(polynomial INTERFACE include)
+
+target_include_directories(polynomial PUBLIC include)
