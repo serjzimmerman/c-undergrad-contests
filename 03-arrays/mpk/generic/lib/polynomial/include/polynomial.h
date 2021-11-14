@@ -1,5 +1,7 @@
 #include <stdio.h>
 
+typedef int mint_t;
+
 typedef struct {
   int *coefficients;
   int len;

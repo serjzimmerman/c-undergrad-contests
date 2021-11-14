@@ -3,7 +3,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "../include/polynomial.h"
+#include "polynomial.h"
 
 #define USE_BUILTIN_CLZ
 
@@ -62,10 +62,10 @@ void polynomial_free(polynomial_t *poly) {
 
 void polynomial_split_half(const polynomial_t * const a, polynomial_t * const a0, polynomial_t * const a1) {
   a0->coefficients = &a->coefficients[0];
-  a1->coefficients = &a->coefficients[a->len >> 1];
+  a1->coefficients = &a->coefficients[(a->len + 1) >> 1];
 
-  a0->len = a->len >> 1;
-  a1->len = a->len >> 1;
+  a0->len = (a->len + 1) >> 1;
+  a1->len = a->len - a0->len;
 }
 
 void polynomial_sum_of_two_double(polynomial_t * const r1, const polynomial_t *a1,
@@ -158,12 +158,12 @@ void polynomial_mul_karatsuba_impl(polynomial_t * const r, const polynomial_t * 
   polynomial_mul_karatsuba_impl(&mul, &suma, &sumb, temp);
 
   middle.coefficients = &(r->coefficients[a0.len]);
-  middle.len = a->len;
+  middle.len = 2 * a0.len;
 
   polynomial_diff_from_two(&mul, &a0b0, &a1b1);
   polynomial_sum_to_one(&middle, &mul);
 
-  temp->pos -= a->len << 1;
+  temp->pos -= a0.len;
 }
 
 void int_stack_free(int_stack_t *a) {
@@ -234,7 +234,7 @@ void polynomial_print(const polynomial_t * const a) {
     ;
   }
 
-  for (i = 0; i <= j; i++) {
+  for (i = 0; i < a->len; i++) {
     printf("%d ", a->coefficients[i]);
   }
 
