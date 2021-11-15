@@ -10,7 +10,7 @@ CLANGF=-style='{BasedOnStyle: LLVM, IndentWidth: 2,\
 TARGET=main
 
 all:
-	$(CC) $(CFLAGS) src/$(TARGET).c -o $(TARGET).elf
+	$(CC) $(CFLAGS) src/$(TARGET).c -o $(TARGET).elf -lm
 
 clean:
 	rm $(TARGET).elf
