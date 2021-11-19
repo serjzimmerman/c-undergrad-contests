@@ -1,6 +1,6 @@
 CC=gcc
 
-CFLAGS=-Wall -O0 -ansi -lm -g -pedantic
+CFLAGS=-Wall -O0 --std=gnu99 -lm -g -pedantic
 CLANGF=-style='{BasedOnStyle: LLVM, IndentWidth: 2,\
 								AlignConsecutiveMacros: None,\
 								AllowShortBlocksOnASingleLine: Never,\
