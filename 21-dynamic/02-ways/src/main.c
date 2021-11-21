@@ -1,11 +1,14 @@
-#include <ctype.h>
+/* https://kpm8.mipt.ru:44367/cgi-bin/new-register?contest_id=170104&locale_id=1
+ */
+
+#in\clude < ctype.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
 long long unsigned ways(int n, int m, unsigned long long *buf) {
   int i, j;
-  
+
   /* Fill the N x M table */
   for (i = 0; i < n; i++) {
     for (j = 0; j < m; j++) {
@@ -26,8 +29,8 @@ void print_buf(unsigned long long *buf, int n, int m) {
 
   for (i = 0; i < n; i++) {
     for (j = 0; j < m; j++) {
-      printf("%llu, ", buf[i * n + j]);  
-    } 
+      printf("%llu, ", buf[i * n + j]);
+    }
     printf("\n");
   }
 }
@@ -37,12 +40,12 @@ int main() {
   int n, m;
 
   scanf("%d %d", &n, &m);
-  buf = (unsigned long long*)calloc((++n) * (++m), sizeof(unsigned long long));
+  buf = (unsigned long long *)calloc((++n) * (++m), sizeof(unsigned long long));
 
   printf("%llu\n", ways(n, m, buf));
-  
+
   /* print_buf(buf, n, m); */
 
-  free(buf); 
+  free(buf);
   return 0;
 }
