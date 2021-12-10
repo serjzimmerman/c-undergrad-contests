@@ -49,6 +49,7 @@ struct node_t *path_create(char *path) {
   return node;
 }
 
+/* Very error-prone code, possible segfault */
 struct node_t *path_normalize(struct node_t *node) {
   struct node_t *next;
 

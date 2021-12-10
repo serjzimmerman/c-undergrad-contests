@@ -2,15 +2,14 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#define N 100
+#define N 128
 
 struct _Decimal {
-  char a[N];      // number is a[0]*10^0 + a[1]*10^1 + ..+ a[n]*10^n
-  unsigned int n; // наибольшая степень десяти
+  /* a[0]*10^0 + a[1]*10^1 + ..+ a[n]*10^n */
+  char a[N];
+  unsigned int n;
 };
 typedef struct _Decimal Decimal;
-
-Decimal zero = {{0}, 0}; // представление 0 в виде структуры
 
 int is_equal(Decimal *a, Decimal *b) {
   int i;
@@ -29,9 +28,7 @@ int is_equal(Decimal *a, Decimal *b) {
 }
 
 int main() {
-  Decimal a = {{7, 4, 1}, 2}; // set number 147
-  Decimal b = {{7, 4, 1}, 2}; // set number 147
-  Decimal z = {{3, 5}, 1};    // set number 53
+  Decimal a = {{7, 4, 1}, 2}, b = {{7, 4, 1}, 2}, z = {{3, 5}, 1};
 
   if (is_equal(&a, &b))
     printf("a==b\n");

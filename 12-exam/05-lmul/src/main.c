@@ -3,10 +3,10 @@
 #include <stdlib.h>
 
 struct _Decimal {
-  char *a;           // number is a[0]*10^0 + a[1]*10^1 + ..+ a[n]*10^n
-  unsigned int n;    // наибольшая степень десяти
-  unsigned int size; // размер выделенной динамической памяти в а (можно это
-                     // поле не использовать).
+  /* a[0]*10^0 + a[1]*10^1 + ..+ a[n]*10^n */
+  char *a;
+  unsigned int n;
+  unsigned int size;
 };
 typedef struct _Decimal Decimal;
 
@@ -67,7 +67,7 @@ int main() {
   a->n = 5;
   a->size = 6;
 
-  res = mult(a, 2); // res = a*5 = 246*5 = 1230
+  res = mult(a, 2);
 
   for (i = res->n; i >= 0; i--) {
     printf("%d ", res->a[i]);
