@@ -8,8 +8,8 @@ struct Point {
 };
 
 struct Rect {
-  struct Point lt; // left top
-  struct Point rb; // right bottom
+  struct Point lt;
+  struct Point rb;
 };
 
 struct Rect *transform(const struct Rect *src) {

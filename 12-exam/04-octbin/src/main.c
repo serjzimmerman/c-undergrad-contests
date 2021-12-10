@@ -9,13 +9,14 @@ int char2int(const char c) {
   return (c - '0');
 }
 
+/* Really hacky way to convert oct to binary with lookup table */
 char *convert(char *dst, const char *src) {
   int i = 0, j = 0, l = 0;
 
+  /* If number is zero */
   if (strcmp(src, "0") == 0) {
     dst[0] = '0';
     dst[1] = '\0';
-
     return dst;
   }
 
@@ -25,9 +26,11 @@ char *convert(char *dst, const char *src) {
     memcpy(&dst[i * 3], lookup_table[char2int(src[i])], 3);
   }
 
+  /* Find first non-zero digit */
   for (j = 0; dst[j] == '0'; j++) {
   }
 
+  /* Remove preceding zeros */
   for (i = 0; i + j < l * 3; i++) {
     dst[i] = dst[i + j];
   }
@@ -38,7 +41,7 @@ char *convert(char *dst, const char *src) {
 }
 
 int main() {
-  char d[100];
+  char d[128];
 
   printf("%s\n", convert(d, "540"));
 
