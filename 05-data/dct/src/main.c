@@ -117,6 +117,9 @@ struct pair_t *hash_table_lookup(struct hash_table_t *table, char *key) {
   struct pair_t *find;
   unsigned long hash;
 
+  assert(table);
+  assert(key);
+
   hash = hash_djb2(key) % (table->size);
 
   find = table->array[hash];
@@ -139,6 +142,8 @@ struct pair_t *hash_table_lookup(struct hash_table_t *table, char *key) {
 void getnc(char *dst, size_t n) {
   int i;
   char c;
+
+  assert(dst);
 
   while ((c = getchar()) == '\n') {
   }
@@ -173,6 +178,7 @@ int main() {
   scanf("%d %d", &a, &l);
 
   buf = calloc(l + 1, sizeof(char));
+  assert(buf);
   getnc(buf, l);
 
   n = gettokn(buf);
@@ -198,6 +204,7 @@ int main() {
 
   scanf("%d", &l);
   buf = calloc(l + 1, sizeof(char));
+  assert(buf);
   getnc(buf, l);
 
   n = gettokn(buf);
