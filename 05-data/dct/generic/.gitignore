@@ -1,0 +1,7 @@
+.vscode/
+build/
+# Ignore compiled binary
+counter
+# Ignore generated tests
+tests/*
+!tests/.keep
