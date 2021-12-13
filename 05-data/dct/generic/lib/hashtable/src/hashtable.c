@@ -1,4 +1,4 @@
-#ifndef D_DEBUG
+#ifdef D_DEBUG
 #define NDEBUG
 #endif
 
