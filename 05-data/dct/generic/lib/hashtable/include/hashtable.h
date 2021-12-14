@@ -21,7 +21,7 @@ typedef unsigned pair_val_t;
 typedef int pair_val_t;
 #endif
 
-/* Key value is allocated on the stack */
+/* Key value is allocated on the heap */
 struct pair_t {
   char *key;
   pair_val_t value;
