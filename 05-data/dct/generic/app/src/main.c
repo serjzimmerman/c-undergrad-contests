@@ -1,25 +1,27 @@
 #include "counter.h"
 #include "hashtable.h"
+
 #include <assert.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
-void getnc(char *dst, size_t n) {
-  int i;
-  char c;
+int getnc(char *dst, size_t n) {
+  int i, c;
 
   assert(dst);
 
   while ((c = getchar()) == '\n') {
   }
 
-  for (i = 0; i < n; i++) {
+  for (i = 0; i < n && c != EOF; i++) {
     *(dst++) = c;
     c = getchar();
   }
 
   *dst = '\0';
+
+  return i;
 }
 
 int gettokn(char *src) {
@@ -40,11 +42,12 @@ int main(int argc, char **argv) {
   char *buf, *tok;
   int a, l, n;
 
-  scanf("%d %d", &a, &l);
+  assert(scanf("%d %d", &a, &l) == 2);
 
   buf = calloc(l + 1, sizeof(char));
   assert(buf);
-  getnc(buf, l);
+  assert(getnc(buf, l) == l);
+
   n = gettokn(buf);
 
   counter = counter_init();
@@ -56,10 +59,12 @@ int main(int argc, char **argv) {
   }
   free(buf);
 
-  scanf("%d", &l);
+  assert(scanf("%d", &l) == 1);
+
   buf = calloc(l + 1, sizeof(char));
   assert(buf);
-  getnc(buf, l);
+  assert(getnc(buf, l) == l);
+
   n = gettokn(buf);
 
   tok = strtok(buf, " ");
@@ -71,9 +76,7 @@ int main(int argc, char **argv) {
     }
   }
 
-#ifdef HASH_TABLE_USE_COLLISIONS
-  printf("Hash collisions: %d\n", counter->table->collisions);
-#endif
+  /* printf("Hash collisions: %d\n", hash_table_get_collisions(counter_get_hashtable(counter))); */
   counter_free(counter);
 
   free(buf);

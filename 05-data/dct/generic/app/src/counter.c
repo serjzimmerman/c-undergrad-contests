@@ -1,5 +1,4 @@
 #include "counter.h"
-#define HASH_TABLE_USE_UINT
 #include "hashtable.h"
 
 #include <assert.h>
@@ -8,6 +7,10 @@
 
 #define DEFAULT_HASHTABLE_SIZE 16
 #define HASH_TABLE_MAX_LOAD 0.75f
+
+struct counter_t {
+  struct hash_table_t *table;
+};
 
 struct counter_t *counter_init() {
   struct counter_t *counter;
@@ -43,7 +46,7 @@ void counter_item_add(struct counter_t *counter, char *key) {
   pair = hash_table_lookup(counter->table, key);
 
   if (pair) {
-    pair->value = pair->value + 1;
+    pair_set_value(pair, pair_get_value(pair) + 1);
   } else {
     pair = pair_init(key, 1);
     hash_table_insert(counter->table, pair);
@@ -56,8 +59,14 @@ unsigned counter_item_get_count(struct counter_t *counter, char *key) {
   pair = hash_table_lookup(counter->table, key);
 
   if (pair) {
-    return pair->value;
+    return pair_get_value(pair);
   } else {
     return 0;
   }
+}
+
+struct hash_table_t *counter_get_hashtable(struct counter_t *counter) {
+  assert(counter);
+
+  return counter->table;
 }

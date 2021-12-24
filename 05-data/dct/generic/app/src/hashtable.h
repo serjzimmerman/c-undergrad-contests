@@ -4,9 +4,6 @@
 #include <stddef.h>
 #include <stdint.h>
 
-#define HASH_TABLE_USE_UINT
-/* #define HASH_TABLE_USE_COLLISIONS */
-
 typedef enum {
   HASH_TABLE_OK,
   HASH_TABLE_EALLOC,
@@ -15,27 +12,10 @@ typedef enum {
 
 extern hash_table_err_t hash_table_errno;
 
-#ifdef HASH_TABLE_USE_UINT
+struct pair_t;
+struct hash_table_t;
+
 typedef unsigned pair_val_t;
-#else
-typedef int pair_val_t;
-#endif
-
-/* Key value is allocated on the heap */
-struct pair_t {
-  char *key;
-  pair_val_t value;
-  struct pair_t *next;
-};
-
-struct hash_table_t {
-  struct pair_t **array;
-  size_t size;
-  size_t buckets_used;
-#ifdef HASH_TABLE_USE_COLLISIONS
-  size_t collisions;
-#endif
-};
 
 struct pair_t *pair_init(char *key, pair_val_t value);
 void pair_set_value(struct pair_t *pair, pair_val_t value);
@@ -47,5 +27,7 @@ struct pair_t *hash_table_lookup(struct hash_table_t *table, char *key);
 struct hash_table_t *hash_table_resize(struct hash_table_t *table, size_t size);
 size_t hash_table_get_size(struct hash_table_t *table);
 size_t hash_table_get_buckets_used(struct hash_table_t *table);
+size_t hash_table_get_collisions(struct hash_table_t *table);
+void pair_free(struct pair_t *pair);
 
 #endif

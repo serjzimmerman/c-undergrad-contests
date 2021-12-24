@@ -12,6 +12,19 @@
 hash_table_err_t hash_table_errno;
 static struct hash_table_t *new_table_;
 
+struct pair_t {
+  char *key;
+  pair_val_t value;
+  struct pair_t *next;
+};
+
+struct hash_table_t {
+  struct pair_t **array;
+  size_t size;
+  size_t buckets_used;
+  size_t collisions;
+};
+
 /* djb2 hash function http://www.cse.yorku.ca/~oz/hash.html */
 unsigned long hash_djb2(const char *str) {
   unsigned long hash = 5381;
@@ -106,11 +119,10 @@ struct hash_table_t *hash_table_init(size_t size) {
 
   table->size = size;
   table->buckets_used = 0;
-#ifdef HASH_TABLE_USE_COLLISIONS
   table->collisions = 0;
-#endif
   table->array = calloc(size, sizeof(struct pair_t *));
   assert(table->array);
+
   if (!table->array) {
     hash_table_errno = HASH_TABLE_EALLOC;
     free(table);
@@ -189,6 +201,12 @@ size_t hash_table_get_buckets_used(struct hash_table_t *table) {
   return table->buckets_used;
 }
 
+size_t hash_table_get_collisions(struct hash_table_t *table) {
+  assert(table);
+
+  return table->collisions;
+}
+
 int hash_table_insert(struct hash_table_t *table, struct pair_t *pair) {
   struct pair_t *empty;
   unsigned long hash;
@@ -216,9 +234,8 @@ int hash_table_insert(struct hash_table_t *table, struct pair_t *pair) {
   }
 
   empty->next = pair;
-#ifdef HASH_TABLE_USE_COLLISIONS
   table->collisions = table->collisions + 1;
-#endif
+
   hash_table_errno = HASH_TABLE_OK;
 
   return 0;
