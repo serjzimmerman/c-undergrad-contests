@@ -5,7 +5,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define DEFAULT_HASHTABLE_SIZE 16
+#define DEFAULT_HASHTABLE_SIZE 128
 #define HASH_TABLE_MAX_LOAD 0.75f
 
 struct counter_t {
