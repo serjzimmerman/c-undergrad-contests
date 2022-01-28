@@ -5,7 +5,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define DEFAULT_HASHTABLE_SIZE 128
+#define DEFAULT_HASHTABLE_SIZE 256
 #define HASH_TABLE_MAX_LOAD 0.75f
 
 struct counter_t {
@@ -18,7 +18,7 @@ struct counter_t *counter_init() {
   counter = calloc(1, sizeof(struct counter_t));
   assert(counter);
 
-  counter->table = hash_table_init(DEFAULT_HASHTABLE_SIZE);
+  counter->table = hash_table_init(DEFAULT_HASHTABLE_SIZE, NULL);
   assert(counter->table);
 
   return counter;
@@ -39,7 +39,7 @@ void counter_item_add(struct counter_t *counter, char *key) {
   load_factor = (float)hash_table_get_buckets_used(counter->table) / hash_table_get_size(counter->table);
 
   if (load_factor > HASH_TABLE_MAX_LOAD) {
-    counter->table = hash_table_resize(counter->table, hash_table_get_size(counter->table) * 2);
+    counter->table = hash_table_resize(&(counter->table), hash_table_get_size(counter->table) * 2);
     assert(counter->table);
   }
 

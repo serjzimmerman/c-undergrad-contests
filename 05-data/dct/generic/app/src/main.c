@@ -1,5 +1,8 @@
 #include "counter.h"
 #include "hashtable.h"
+#include "sllistc.h"
+
+#undef NDEBUG
 
 #include <assert.h>
 #include <stdio.h>
@@ -37,10 +40,22 @@ int gettokn(char *src) {
   return r;
 }
 
+void print_callback(struct sl_node_t *node, struct sl_list_t *list, va_list argp) {
+  printf("%p -- %d\n", node, *(int *)sl_node_get_data(node));
+}
+
+void sl_list_print(struct sl_list_t *list) {
+  sl_list_iterate_over_nodes(list, print_callback);
+}
+
+int cmp_int(void *a, void *b) {
+  return *(int *)a - *(int *)b;
+}
+
 int main(int argc, char **argv) {
   struct counter_t *counter;
   char *buf, *tok;
-  int a, l, n;
+  int a, l, n, res;
 
   assert(scanf("%d %d", &a, &l) == 2);
 
@@ -76,7 +91,6 @@ int main(int argc, char **argv) {
     }
   }
 
-  /* printf("Hash collisions: %d\n", hash_table_get_collisions(counter_get_hashtable(counter))); */
   counter_free(counter);
 
   free(buf);

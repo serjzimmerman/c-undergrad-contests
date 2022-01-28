@@ -4,25 +4,29 @@
 
 /* Asserts only in debug build type, in release mode pointers are assumed to be valid */
 #include <assert.h>
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
 #include "hashtable.h"
-
-hash_table_err_t hash_table_errno;
-static struct hash_table_t *new_table_;
+#include "sllistc.h"
 
 struct pair_t {
-  char *key;
+  void *key;
   pair_val_t value;
-  struct pair_t *next;
+};
+
+struct chain_pointer_t {
+  struct sl_node_t *node;
+  size_t n;
 };
 
 struct hash_table_t {
-  struct pair_t **array;
-  size_t size;
-  size_t buckets_used;
+  struct sl_list_t *list;
+  size_t size, buckets_used;
   size_t collisions;
+  unsigned long (*hash_func)(const char *);
+  struct chain_pointer_t array[];
 };
 
 /* djb2 hash function http://www.cse.yorku.ca/~oz/hash.html */
@@ -39,27 +43,22 @@ unsigned long hash_djb2(const char *str) {
   return hash;
 }
 
-struct pair_t *pair_init(char *key, pair_val_t value) {
+struct pair_t *pair_init(const char *key, pair_val_t value) {
   struct pair_t *pair;
   size_t len;
 
   assert(key);
 
   pair = calloc(1, sizeof(struct pair_t));
-  assert(pair);
 
   if (!pair) {
-    hash_table_errno = HASH_TABLE_EALLOC;
     return NULL;
   }
 
   len = strlen(key);
-
   pair->key = calloc(1, (len + 1) * sizeof(char));
-  assert(pair->key);
 
   if (!pair->key) {
-    hash_table_errno = HASH_TABLE_EALLOC;
     free(pair);
     return NULL;
   }
@@ -67,8 +66,14 @@ struct pair_t *pair_init(char *key, pair_val_t value) {
   memcpy(pair->key, key, len);
   pair->value = value;
 
-  hash_table_errno = HASH_TABLE_OK;
   return pair;
+}
+
+void pair_free(struct pair_t *pair) {
+  assert(pair);
+
+  free(pair->key);
+  free(pair);
 }
 
 void pair_set_value(struct pair_t *pair, pair_val_t value) {
@@ -83,109 +88,41 @@ pair_val_t pair_get_value(struct pair_t *pair) {
   return pair->value;
 }
 
-void pair_free_list(struct pair_t *pair) {
-  struct pair_t *next;
-
-  assert(pair);
-
-  while (pair) {
-    next = pair->next;
-
-    free(pair->key);
-    free(pair);
-
-    pair = next;
-  }
-}
-
-void pair_free(struct pair_t *pair) {
-  assert(pair);
-
-  free(pair->key);
-  free(pair);
-}
-
-struct hash_table_t *hash_table_init(size_t size) {
+struct hash_table_t *hash_table_init(size_t size, unsigned long (*hash)(const char *)) {
   struct hash_table_t *table;
 
   assert(size);
 
-  table = calloc(1, sizeof(struct hash_table_t));
-  assert(table);
+  table = calloc(1, sizeof(struct hash_table_t) + sizeof(struct chain_pointer_t) * size);
+
   if (!table) {
-    hash_table_errno = HASH_TABLE_EALLOC;
     return NULL;
+  }
+
+  if (hash) {
+    table->hash_func = hash;
+  } else {
+    table->hash_func = hash_djb2;
   }
 
   table->size = size;
   table->buckets_used = 0;
   table->collisions = 0;
-  table->array = calloc(size, sizeof(struct pair_t *));
-  assert(table->array);
 
-  if (!table->array) {
-    hash_table_errno = HASH_TABLE_EALLOC;
+  table->list = sl_list_init();
+
+  if (!table->list) {
     free(table);
     return NULL;
   }
 
-  hash_table_errno = HASH_TABLE_OK;
   return table;
 }
 
-void hash_table_rehash_pair(struct pair_t *pair) {
-  assert(new_table_);
-
-  pair->next = NULL;
-  hash_table_insert(new_table_, pair);
-}
-
-void hash_table_iterate_over_pairs(struct hash_table_t *table, void callback(struct pair_t *pair)) {
-  struct pair_t *pair, *next;
-  int i;
-
-  assert(table);
-
-  for (i = 0; i < table->size; i++) {
-    if (table->array[i]) {
-      pair = table->array[i];
-
-      while (pair) {
-        next = pair->next;
-        callback(pair);
-        pair = next;
-      }
-    }
-  }
-}
-
-struct hash_table_t *hash_table_resize(struct hash_table_t *table, size_t size) {
-  struct hash_table_t *new_table;
-
-  assert(table);
-  assert(size);
-
-  new_table = hash_table_init(size);
-
-  new_table->size = size;
-  new_table_ = new_table;
-
-  hash_table_iterate_over_pairs(table, hash_table_rehash_pair);
-
-  free(table->array);
-  free(table);
-
-  return new_table;
-}
-
 void hash_table_free(struct hash_table_t *table) {
-  size_t i;
-
   assert(table);
 
-  hash_table_iterate_over_pairs(table, pair_free);
-
-  free(table->array);
+  sl_list_free(table->list, ((void *)(void *)pair_free));
   free(table);
 }
 
@@ -208,61 +145,107 @@ size_t hash_table_get_collisions(struct hash_table_t *table) {
 }
 
 int hash_table_insert(struct hash_table_t *table, struct pair_t *pair) {
-  struct pair_t *empty;
+  struct sl_node_t *node, *collision;
   unsigned long hash;
 
   assert(table);
   assert(pair);
 
-  hash = hash_djb2(pair->key) % (table->size);
+  hash = table->hash_func(pair->key) % (table->size);
 
-  empty = table->array[hash];
+  node = sl_node_init();
+  if (!node) {
+    return 1;
+  }
+  sl_node_set_data(node, pair);
 
-  if (empty == NULL) {
-    table->array[hash] = pair;
+  if (table->array[hash].node == NULL) {
+    sl_list_append(table->list, node);
+    table->array[hash].node = node;
+    table->array[hash].n = 1;
     table->buckets_used++;
-    hash_table_errno = HASH_TABLE_OK;
     return 0;
   }
 
-  while (empty->next) {
-    if (strcmp(empty->key, pair->key) == 0) {
-      hash_table_errno = HASH_TABLE_INS_PRESENT;
-      return 1;
-    }
-    empty = empty->next;
-  }
-
-  empty->next = pair;
-  table->collisions = table->collisions + 1;
-
-  hash_table_errno = HASH_TABLE_OK;
+  collision = sl_node_get_n_next(table->array[hash].node, (table->array[hash].n++) - 1);
+  sl_list_insert_after(table->list, collision, node);
+  table->collisions++;
 
   return 0;
 }
 
 struct pair_t *hash_table_lookup(struct hash_table_t *table, char *key) {
-  struct pair_t *find;
+  struct sl_node_t *find;
   unsigned long hash;
+  int i;
 
   assert(table);
   assert(key);
 
-  hash = hash_djb2(key) % (table->size);
-
-  find = table->array[hash];
+  hash = table->hash_func(key) % (table->size);
+  find = table->array[hash].node;
 
   if (!find) {
     return NULL;
   }
 
   /* If a node is found then linked list is seached for a node with specified key */
-  while (find) {
-    if (strcmp(find->key, key) == 0) {
-      return find;
+  for (i = table->array[hash].n; i > 0; i--) {
+    if (strcmp(((struct pair_t *)sl_node_get_data(find))->key, key) == 0) {
+      return (struct pair_t *)sl_node_get_data(find);
     }
-    find = find->next;
+    find = sl_node_get_n_next(find, 1);
   }
 
   return NULL;
+}
+
+void resize_node_callback(struct sl_node_t *node, struct sl_list_t *list, va_list argp) {
+  struct hash_table_t *table;
+  struct sl_node_t *collision;
+  unsigned long hash;
+
+  table = va_arg(argp, struct hash_table_t *);
+  hash = table->hash_func(((struct pair_t *)sl_node_get_data(node))->key) % (table->size);
+  sl_list_remove_node(list, NULL, node);
+
+  if (table->array[hash].node == NULL) {
+    sl_list_push(table->list, node);
+    table->array[hash].node = node;
+    table->array[hash].n = 1;
+    table->buckets_used++;
+    return;
+  }
+
+  collision = sl_node_get_n_next(table->array[hash].node, (table->array[hash].n++) - 1);
+  sl_list_insert_after(table->list, collision, node);
+  table->collisions++;
+}
+
+struct hash_table_t *hash_table_resize(struct hash_table_t **table, size_t size) {
+  struct hash_table_t *new_table;
+  struct sl_list_t *old;
+
+  assert(table);
+  assert(size);
+
+  (*table)->size = size;
+  (*table) = realloc(*table, sizeof(struct hash_table_t) + sizeof(struct chain_pointer_t) * (*table)->size);
+
+  if (!(*table)) {
+    sl_list_free((*table)->list, ((void *)(void *)pair_free));
+    return NULL;
+  }
+
+  old = (*table)->list;
+  (*table)->list = sl_list_init();
+
+  memset((*table)->array, 0, sizeof(struct chain_pointer_t) * size);
+  (*table)->buckets_used = 0;
+  (*table)->collisions = 0;
+
+  sl_list_iterate_over_nodes(old, resize_node_callback, (*table), old);
+  sl_list_free(old, (void *)(void *)pair_free);
+
+  return (*table);
 }
