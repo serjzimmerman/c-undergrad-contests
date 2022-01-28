@@ -12,7 +12,6 @@
 struct sl_node_t {
   struct sl_node_t *next;
   void *data;
-  size_t size;
 };
 
 struct sl_node_t *sl_node_init() {
