@@ -1,1 +1,1 @@
-/* Impelment doubly linked list */
+/* Implement doubly linked list */
