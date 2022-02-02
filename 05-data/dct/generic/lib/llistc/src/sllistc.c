@@ -279,6 +279,7 @@ void sl_list_merge_sort(struct sl_list_t *list, int (*cmp_func)(void *a, void *b
 
   /* Recalculate list->last node */
 
+  curr = list->head;
   while (curr->next) {
     curr = curr->next;
   }

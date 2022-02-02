@@ -1,6 +1,5 @@
 #include "counter.h"
 #include "hashtable.h"
-#include "sllistc.h"
 
 #undef NDEBUG
 
@@ -38,18 +37,6 @@ int gettokn(char *src) {
   }
 
   return r;
-}
-
-void print_callback(struct sl_node_t *node, struct sl_list_t *list, va_list argp) {
-  printf("%p -- %d\n", node, *(int *)sl_node_get_data(node));
-}
-
-void sl_list_print(struct sl_list_t *list) {
-  sl_list_iterate_over_nodes(list, print_callback);
-}
-
-int cmp_int(void *a, void *b) {
-  return *(int *)a - *(int *)b;
 }
 
 int main(int argc, char **argv) {
