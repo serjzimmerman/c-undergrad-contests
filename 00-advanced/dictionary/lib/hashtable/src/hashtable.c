@@ -18,7 +18,6 @@ struct pair_t {
 
 struct chain_pointer_t {
   struct sl_node_t *node;
-  size_t n;
 };
 
 struct hash_table_t {
@@ -48,6 +47,10 @@ struct pair_t *pair_init(const char *key, pair_val_t value) {
   size_t len;
 
   assert(key);
+
+  if (!key) {
+    return NULL;
+  }
 
   pair = calloc(1, sizeof(struct pair_t));
 
@@ -108,7 +111,6 @@ struct hash_table_t *hash_table_init(size_t size, unsigned long (*hash)(const ch
   table->size = size;
   table->buckets_used = 0;
   table->collisions = 0;
-
   table->list = sl_list_init();
 
   if (!table->list) {
@@ -145,7 +147,7 @@ size_t hash_table_get_collisions(struct hash_table_t *table) {
 }
 
 int hash_table_insert(struct hash_table_t *table, struct pair_t *pair) {
-  struct sl_node_t *node, *collision;
+  struct sl_node_t *node;
   unsigned long hash;
 
   assert(table);
@@ -162,27 +164,27 @@ int hash_table_insert(struct hash_table_t *table, struct pair_t *pair) {
   if (table->array[hash].node == NULL) {
     sl_list_append(table->list, node);
     table->array[hash].node = node;
-    table->array[hash].n = 1;
     table->buckets_used++;
     return 0;
   }
 
-  collision = sl_node_get_n_next(table->array[hash].node, (table->array[hash].n++) - 1);
-  sl_list_insert_after(table->list, collision, node);
+  /* collision = sl_node_get_n_next(table->array[hash].node, 0); */
+  sl_list_insert_after(table->list, table->array[hash].node, node);
   table->collisions++;
+  /* table->array[hash].n++; */
 
   return 0;
 }
 
 struct pair_t *hash_table_lookup(struct hash_table_t *table, char *key) {
   struct sl_node_t *find;
-  unsigned long hash;
+  unsigned long hash, temphash;
   int i;
 
   assert(table);
   assert(key);
 
-  hash = table->hash_func(key) % (table->size);
+  hash = temphash = table->hash_func(key) % (table->size);
   find = table->array[hash].node;
 
   if (!find) {
@@ -190,11 +192,15 @@ struct pair_t *hash_table_lookup(struct hash_table_t *table, char *key) {
   }
 
   /* If a node is found then linked list is seached for a node with specified key */
-  for (i = table->array[hash].n; i > 0; i--) {
+  while (temphash == hash) {
     if (strcmp(((struct pair_t *)sl_node_get_data(find))->key, key) == 0) {
       return (struct pair_t *)sl_node_get_data(find);
     }
     find = sl_node_get_n_next(find, 1);
+    if (!find) {
+      break;
+    }
+    temphash = table->hash_func(((struct pair_t *)sl_node_get_data(find))->key) % (table->size);
   }
 
   return NULL;
@@ -202,7 +208,6 @@ struct pair_t *hash_table_lookup(struct hash_table_t *table, char *key) {
 
 void resize_node_callback(struct sl_node_t *node, struct sl_list_t *list, va_list argp) {
   struct hash_table_t *table;
-  struct sl_node_t *collision;
   unsigned long hash;
 
   table = va_arg(argp, struct hash_table_t *);
@@ -212,13 +217,11 @@ void resize_node_callback(struct sl_node_t *node, struct sl_list_t *list, va_lis
   if (table->array[hash].node == NULL) {
     sl_list_push(table->list, node);
     table->array[hash].node = node;
-    table->array[hash].n = 1;
     table->buckets_used++;
     return;
   }
 
-  collision = sl_node_get_n_next(table->array[hash].node, (table->array[hash].n++) - 1);
-  sl_list_insert_after(table->list, collision, node);
+  sl_list_insert_after(table->list, table->array[hash].node, node);
   table->collisions++;
 }
 
@@ -230,14 +233,14 @@ struct hash_table_t *hash_table_resize(struct hash_table_t **table, size_t size)
   assert(size);
 
   (*table)->size = size;
+  old = (*table)->list;
   (*table) = realloc(*table, sizeof(struct hash_table_t) + sizeof(struct chain_pointer_t) * (*table)->size);
 
   if (!(*table)) {
-    sl_list_free((*table)->list, ((void *)(void *)pair_free));
+    sl_list_free(old, ((void *)(void *)pair_free));
     return NULL;
   }
 
-  old = (*table)->list;
   (*table)->list = sl_list_init();
 
   memset((*table)->array, 0, sizeof(struct chain_pointer_t) * size);

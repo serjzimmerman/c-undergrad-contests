@@ -1,0 +1,4 @@
+test/bin/*
+!test/bin/.keep
+cases/temp.dat
+gmon.out

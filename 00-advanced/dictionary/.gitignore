@@ -1,4 +1,3 @@
 .vscode/
 build/
 # Ignore compiled binary
-counter

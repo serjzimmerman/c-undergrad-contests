@@ -19,10 +19,6 @@ struct sl_node_t *sl_node_init() {
 
   node = calloc(1, sizeof(struct sl_node_t));
 
-  if (!node) {
-    return NULL;
-  }
-
   return node;
 }
 
@@ -33,8 +29,6 @@ void *sl_node_get_data(struct sl_node_t *const node) {
 }
 
 void sl_node_free(struct sl_node_t *const node) {
-  assert(node);
-
   free(node);
 }
 
@@ -46,7 +40,7 @@ void sl_node_set_data(struct sl_node_t *const node, void *const data) {
 
 struct sl_node_t *sl_node_get_n_next(struct sl_node_t *const node, int n) {
   struct sl_node_t *curr;
-  
+
   curr = node;
 
   for (; n > 0; n--) {
@@ -80,19 +74,15 @@ void sl_list_free(struct sl_list_t *const list, void (*datafree)(void *data)) {
 
   curr = list->head;
 
-  if (datafree) {
-    while (curr) {
-      next = curr->next;
+  while (curr) {
+    next = curr->next;
+
+    if (datafree) {
       datafree(sl_node_get_data(curr));
-      sl_node_free(curr);
-      curr = next;
     }
-  } else {
-    while (curr) {
-      next = curr->next;
-      sl_node_free(curr);
-      curr = next;
-    }
+
+    sl_node_free(curr);
+    curr = next;
   }
 
   free(list);
@@ -164,7 +154,7 @@ void sl_list_insert_after(struct sl_list_t *const list, struct sl_node_t *const 
 void sl_list_remove_node(struct sl_list_t *const list, struct sl_node_t *prev, struct sl_node_t *node) {
   assert(list);
   assert(node);
-  
+
   if (list->head == list->tail) {
     list->head = NULL;
     list->tail = NULL;
@@ -178,9 +168,7 @@ void sl_list_remove_node(struct sl_list_t *const list, struct sl_node_t *prev, s
 }
 
 void sl_list_iterate_over_nodes(struct sl_list_t *const list,
-                                void (*callback)(struct sl_node_t *node, struct sl_list_t *list,
-                                                 va_list argp),
-                                ...) {
+                                void (*callback)(struct sl_node_t *node, struct sl_list_t *list, va_list argp), ...) {
   struct sl_node_t *curr, *prev, *next;
   va_list argp, argcopy;
 
