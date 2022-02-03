@@ -1,4 +1,4 @@
-_base="./tests"
+_base="./cases"
 
 red=`tput setaf 1`
 green=`tput setaf 2`
@@ -8,7 +8,7 @@ for file in $_base/test*.dat
 do
   count=`echo $file | egrep -o [0-9]+`
   echo -n "Testing ${green}${file}${reset} ... "
-  ./counter < $file > $_base/temp.dat
+  ./test/bin/test < $file > $_base/temp.dat
   if diff ${_base}/ans${count}.dat ${_base}/temp.dat; then
     echo "${green}Passed${reset}"
   else

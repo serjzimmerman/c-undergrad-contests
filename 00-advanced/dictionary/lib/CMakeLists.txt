@@ -1,1 +1,2 @@
 add_subdirectory(llistc)
+add_subdirectory(hashtable)

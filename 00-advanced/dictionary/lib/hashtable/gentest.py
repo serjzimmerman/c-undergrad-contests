@@ -40,14 +40,14 @@ def generate_random_test():
 
 def generate_n_tests(n):
     for i in range(n):
-        text_file = open('tests/test{}.dat'.format(i), 'w+')
+        text_file = open('cases/test{}.dat'.format(i), 'w+')
 
         test = generate_random_test()
 
         text_file.write(test['test'])
         text_file.close()
 
-        text_file = open('tests/ans{}.dat'.format(i), 'w+')
+        text_file = open('cases/ans{}.dat'.format(i), 'w+')
         text_file.write(test['ans'])
         text_file.close()
 
