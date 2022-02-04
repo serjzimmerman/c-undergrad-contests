@@ -8,8 +8,18 @@
 #include <stdlib.h>
 #include <string.h>
 
-int getnc(char *dst, size_t n) {
-  int i, c;
+unsigned long sdbm(const char *str) {
+  unsigned long hash = 0;
+  int c;
+
+  while (c = *str++)
+    hash = c + (hash << 6) + (hash << 16) - hash;
+
+  return hash;
+}
+
+long long getnc(char *dst, size_t n) {
+  long long i, c;
 
   assert(dst);
 
@@ -26,8 +36,8 @@ int getnc(char *dst, size_t n) {
   return i;
 }
 
-int gettokn(char *src) {
-  int r = 1;
+long long gettokn(char *src) {
+  long long r = 1;
 
   assert(src);
 
@@ -42,7 +52,7 @@ int gettokn(char *src) {
 int main(int argc, char **argv) {
   struct counter_t *counter;
   char *buf, *tok;
-  int a, l, n, res;
+  long long a, l, n, res;
 
   assert(scanf("%d %d", &a, &l) == 2);
 
@@ -52,7 +62,7 @@ int main(int argc, char **argv) {
 
   n = gettokn(buf);
 
-  counter = counter_init();
+  counter = counter_init(NULL);
 
   tok = strtok(buf, " ");
   while (tok) {
@@ -78,6 +88,9 @@ int main(int argc, char **argv) {
     }
   }
 
+  fprintf(stderr, "\nCollisions: \t%d\nInserts: \t%d\nSize: \t\t%d\n",
+          hash_table_get_collisions(counter_get_hashtable(counter)),
+          hash_table_get_inserts(counter_get_hashtable(counter)), hash_table_get_size(counter_get_hashtable(counter)));
   counter_free(counter);
 
   free(buf);
