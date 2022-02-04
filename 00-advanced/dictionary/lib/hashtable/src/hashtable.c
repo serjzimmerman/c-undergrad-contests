@@ -22,7 +22,7 @@ struct chain_pointer_t {
 
 struct hash_table_t {
   struct sl_list_t *list;
-  size_t size, buckets_used;
+  size_t size, buckets_used, inserts;
   size_t collisions;
   unsigned long (*hash_func)(const char *);
   struct chain_pointer_t array[];
@@ -111,6 +111,7 @@ struct hash_table_t *hash_table_init(size_t size, unsigned long (*hash)(const ch
   table->size = size;
   table->buckets_used = 0;
   table->collisions = 0;
+  table->inserts = 0;
   table->list = sl_list_init();
 
   if (!table->list) {
@@ -146,32 +147,52 @@ size_t hash_table_get_collisions(struct hash_table_t *table) {
   return table->collisions;
 }
 
-int hash_table_insert(struct hash_table_t *table, struct pair_t *pair) {
+size_t hash_table_get_inserts(struct hash_table_t *table) {
+  assert(table);
+
+  return table->inserts;
+}
+
+#define HASH_TABLE_LOAD_FACTOR 0.7f
+
+int hash_table_insert(struct hash_table_t **table, struct pair_t *pair) {
   struct sl_node_t *node;
   unsigned long hash;
+  float load_factor;
 
   assert(table);
   assert(pair);
 
-  hash = table->hash_func(pair->key) % (table->size);
+  load_factor = (float)(*table)->inserts / (*table)->size;
 
+  if (load_factor > HASH_TABLE_LOAD_FACTOR) {
+    (*table) = hash_table_resize(table, (*table)->size * 2);
+  }
+
+  if (!(*table)) {
+    return 1;
+  }
+
+  hash = (*table)->hash_func(pair->key) % ((*table)->size);
   node = sl_node_init();
   if (!node) {
     return 1;
   }
+
+  (*table)->inserts++;
   sl_node_set_data(node, pair);
 
-  if (table->array[hash].node == NULL) {
-    sl_list_append(table->list, node);
-    table->array[hash].node = node;
-    table->buckets_used++;
+  if ((*table)->array[hash].node == NULL) {
+    sl_list_append((*table)->list, node);
+    (*table)->array[hash].node = node;
+    (*table)->buckets_used++;
     return 0;
   }
 
-  /* collision = sl_node_get_n_next(table->array[hash].node, 0); */
-  sl_list_insert_after(table->list, table->array[hash].node, node);
-  table->collisions++;
-  /* table->array[hash].n++; */
+  /* collision = sl_node_get_n_next((*table)->array[hash].node, 0); */
+  sl_list_insert_after((*table)->list, (*table)->array[hash].node, node);
+  (*table)->collisions++;
+  /* (*table)->array[hash].n++; */
 
   return 0;
 }

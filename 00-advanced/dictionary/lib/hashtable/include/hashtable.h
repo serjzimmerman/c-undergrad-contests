@@ -15,11 +15,12 @@ void pair_set_value(struct pair_t *pair, pair_val_t value);
 pair_val_t pair_get_value(struct pair_t *pair);
 struct hash_table_t *hash_table_init(size_t size, unsigned long (*hash)(const char *));
 void hash_table_free(struct hash_table_t *table);
-int hash_table_insert(struct hash_table_t *table, struct pair_t *pair);
+int hash_table_insert(struct hash_table_t **table, struct pair_t *pair);
 struct pair_t *hash_table_lookup(struct hash_table_t *table, char *key);
 struct hash_table_t *hash_table_resize(struct hash_table_t **table, size_t size);
 size_t hash_table_get_size(struct hash_table_t *table);
 size_t hash_table_get_buckets_used(struct hash_table_t *table);
 size_t hash_table_get_collisions(struct hash_table_t *table);
+size_t hash_table_get_inserts(struct hash_table_t *table);
 
 #endif

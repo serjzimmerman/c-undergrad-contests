@@ -5,20 +5,18 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define DEFAULT_HASHTABLE_SIZE 256
-#define HASH_TABLE_MAX_LOAD 0.75f
-
+#define DEFAULT_COUNTER_SIZE 16
 struct counter_t {
   struct hash_table_t *table;
 };
 
-struct counter_t *counter_init() {
+struct counter_t *counter_init(unsigned long (*hash)(const char *)) {
   struct counter_t *counter;
 
   counter = calloc(1, sizeof(struct counter_t));
   assert(counter);
 
-  counter->table = hash_table_init(DEFAULT_HASHTABLE_SIZE, NULL);
+  counter->table = hash_table_init(DEFAULT_COUNTER_SIZE, hash);
   assert(counter->table);
 
   return counter;
@@ -34,14 +32,6 @@ void counter_free(struct counter_t *counter) {
 
 void counter_item_add(struct counter_t *counter, char *key) {
   struct pair_t *pair;
-  float load_factor;
-
-  load_factor = (float)hash_table_get_buckets_used(counter->table) / hash_table_get_size(counter->table);
-
-  if (load_factor > HASH_TABLE_MAX_LOAD) {
-    counter->table = hash_table_resize(&(counter->table), hash_table_get_size(counter->table) * 2);
-    assert(counter->table);
-  }
 
   pair = hash_table_lookup(counter->table, key);
 
@@ -49,7 +39,7 @@ void counter_item_add(struct counter_t *counter, char *key) {
     pair_set_value(pair, pair_get_value(pair) + 1);
   } else {
     pair = pair_init(key, 1);
-    hash_table_insert(counter->table, pair);
+    hash_table_insert(&counter->table, pair);
   }
 }
 
