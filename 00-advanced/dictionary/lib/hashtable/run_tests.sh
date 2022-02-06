@@ -8,8 +8,8 @@ for file in $_base/test*.dat
 do
   count=`echo $file | egrep -o [0-9]+`
   echo -n "Testing ${green}${file}${reset} ... "
-  ./test/bin/test < $file > $_base/temp.dat
-  if diff ${_base}/ans${count}.dat ${_base}/temp.dat; then
+  ./test/bin/test -i $file > $_base/temp.dat
+  if diff -Z ${_base}/ans${count}.dat ${_base}/temp.dat; then
     echo "${green}Passed${reset}"
   else
     echo "${red}Failed${reset}"
