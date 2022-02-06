@@ -1,97 +1,198 @@
 #include "counter.h"
 #include "hashtable.h"
+#include "util.h"
 
 #undef NDEBUG
 
 #include <assert.h>
+#include <fcntl.h>
+#include <getopt.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <sys/mman.h>
+#include <sys/stat.h>
+#include <unistd.h>
 
-unsigned long sdbm(const char *str) {
-  unsigned long hash = 0;
-  int c;
+#define PRINT_DEBUG_INFO
 
-  while (c = *str++)
-    hash = c + (hash << 6) + (hash << 16) - hash;
+struct cmd_args_t {
+  char *input_path;
+} cmd_args_default = {NULL};
 
-  return hash;
-}
+const char *const usage_string = "Usage: test [-i <path>] [-o <path>]\n";
 
-long long getnc(char *dst, size_t n) {
-  long long i, c;
+int handle_input(int argc, char **argv, struct cmd_args_t *args) {
+  int c, p = 0;
 
-  assert(dst);
+  *args = cmd_args_default;
 
-  while ((c = getchar()) == '\n') {
+  while ((c = getopt(argc, argv, "o:i:h")) != -1) {
+    switch (c) {
+    case 'i':
+      args->input_path = optarg;
+      p += 2;
+      break;
+    case 'h':
+      fprintf(stderr, usage_string);
+      return -1;
+    case '?':
+      if (optopt == 'i' || optopt == 'o') {
+        fprintf(stderr, "Option -%c requires an argument.\n", optopt);
+      }
+      return -1;
+    default:
+      exit(EXIT_FAILURE);
+    }
   }
 
-  for (i = 0; i < n && c != EOF; i++) {
-    *(dst++) = c;
-    c = getchar();
+  if (argc > p + 1) {
+    fprintf(stderr, "Invalid arguments. Run -h for help.\n");
+    return -1;
   }
 
-  *dst = '\0';
-
-  return i;
+  return 0;
 }
 
-long long gettokn(char *src) {
-  long long r = 1;
+char *get_buf_from_file(struct cmd_args_t args, int *fd, size_t *len) {
+  struct stat st;
+  char *buf;
+  int fdi;
 
-  assert(src);
-
-  while ((src = strchr(src, ' '))) {
-    r++;
-    src++;
+  fdi = open(args.input_path, O_RDONLY);
+  if (fdi == -1) {
+    fprintf(stderr, "Could not open input file %s\n", args.input_path);
+    exit(EXIT_FAILURE);
   }
+  if (fstat(fdi, &st) == -1) {
+    fprintf(stderr, "Could not open input file %s\n", args.input_path);
+    exit(EXIT_FAILURE);
+  }
+  buf = mmap(NULL, st.st_size, PROT_READ | PROT_WRITE, MAP_PRIVATE, fdi, 0);
+  *fd = fdi;
+  *len = st.st_size;
 
-  return r;
+  return buf;
 }
 
-int main(int argc, char **argv) {
+void application_loop_read_file(struct cmd_args_t args) {
   struct counter_t *counter;
+  long long l, c;
   char *buf, *tok;
-  long long a, l, n, res;
+  int fdi;
+  size_t len;
 
-  assert(scanf("%d %d", &a, &l) == 2);
-
-  buf = calloc(l + 1, sizeof(char));
-  assert(buf);
-  assert(getnc(buf, l) == l);
-
-  n = gettokn(buf);
+  buf = get_buf_from_file(args, &fdi, &len);
 
   counter = counter_init(NULL);
+
+  strtokn(buf, " \n", &tok);
+  strtokn(NULL, " \n", &tok);
+  l = atoll(tok);
+
+  c = 0;
+
+  c += strtokn(NULL, " ", &tok);
+  while (tok && c <= l + 1) {
+    counter_item_add(counter, tok);
+    c += strtokn(NULL, " \n", &tok);
+  }
+
+  l = atoll(tok);
+  c = 0;
+
+  c += strtokn(NULL, " ", &tok);
+  while (tok && c <= l + 1) {
+    printf((tok ? "%d " : "%d"), counter_item_get_count(counter, tok));
+    c += strtokn(NULL, " ", &tok);
+  }
+
+#ifdef PRINT_DEBUG_INFO
+  fprintf(stderr, "\nCollisions: \t%ld\nInserts: \t%ld\nSize: \t\t%ld\n",
+          hash_table_get_collisions(counter_get_hashtable(counter)),
+          hash_table_get_inserts(counter_get_hashtable(counter)), hash_table_get_size(counter_get_hashtable(counter)));
+#endif
+  counter_free(counter);
+
+  munmap(buf, len);
+  close(fdi);
+}
+
+void application_loop_read_stdin() {
+  struct counter_t *counter;
+  long long a, l;
+  char *buf, *tok;
+  int res;
+
+  counter = counter_init(NULL);
+
+  res = scanf("%lld %lld", &a, &l);
+  if (res != 2) {
+    fprintf(stderr, "Invalid input\n");
+    exit(EXIT_FAILURE);
+  }
+
+  buf = calloc(l + 1, sizeof(char));
+  if (!buf) {
+    fprintf(stderr, "Unable to allocate memory\n");
+    exit(EXIT_FAILURE);
+  }
+  res = getnc(buf, l);
+  if (res != l) {
+    fprintf(stderr, "Error while reading from file. Read %d characters out of %lld", res, l);
+    exit(EXIT_FAILURE);
+  }
 
   tok = strtok(buf, " ");
   while (tok) {
     counter_item_add(counter, tok);
     tok = strtok(NULL, " ");
   }
+
   free(buf);
 
-  assert(scanf("%d", &l) == 1);
+  res = scanf("%lld", &l);
+  if (res != 1) {
+    fprintf(stderr, "Invalid input\n");
+    exit(EXIT_FAILURE);
+  }
 
   buf = calloc(l + 1, sizeof(char));
-  assert(buf);
-  assert(getnc(buf, l) == l);
-
-  n = gettokn(buf);
+  if (!buf) {
+    fprintf(stderr, "Unable to allocate memory\n");
+    exit(EXIT_FAILURE);
+  }
+  res = getnc(buf, l);
+  if (res != l) {
+    fprintf(stderr, "Error while reading from file. Read %d characters out of %lld", res, l);
+    exit(EXIT_FAILURE);
+  }
 
   tok = strtok(buf, " ");
   while (tok) {
-    printf("%d", counter_item_get_count(counter, tok));
+    printf((tok ? "%d " : "%d"), counter_item_get_count(counter, tok));
     tok = strtok(NULL, " ");
-    if (tok) {
-      printf(" ");
-    }
   }
 
-  fprintf(stderr, "\nCollisions: \t%d\nInserts: \t%d\nSize: \t\t%d\n",
+  free(buf);
+#ifdef PRINT_DEBUG_INFO
+  fprintf(stderr, "\nCollisions: \t%ld\nInserts: \t%ld\nSize: \t\t%ld\n",
           hash_table_get_collisions(counter_get_hashtable(counter)),
           hash_table_get_inserts(counter_get_hashtable(counter)), hash_table_get_size(counter_get_hashtable(counter)));
+#endif
   counter_free(counter);
+}
 
-  free(buf);
+int main(int argc, char **argv) {
+  struct cmd_args_t args;
+
+  if (handle_input(argc, argv, &args)) {
+    exit(EXIT_FAILURE);
+  }
+
+  if (args.input_path == NULL) {
+    application_loop_read_stdin();
+  } else {
+    application_loop_read_file(args);
+  }
 }

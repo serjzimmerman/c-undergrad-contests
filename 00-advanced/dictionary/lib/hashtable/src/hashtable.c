@@ -18,6 +18,9 @@ struct pair_t {
 
 struct chain_pointer_t {
   struct sl_node_t *node;
+#ifdef USE_CHAIN_POINTER_N_OPTIMIZATION
+  size_t n;
+#endif
 };
 
 struct hash_table_t {
@@ -35,7 +38,7 @@ unsigned long hash_djb2(const char *str) {
 
   assert(str);
 
-  while (c = *(str++)) {
+  while ((c = *(str++))) {
     hash = ((hash << 5) + hash) + c; /* hash * 33 + c */
   }
 
@@ -185,27 +188,40 @@ int hash_table_insert(struct hash_table_t **table, struct pair_t *pair) {
   if ((*table)->array[hash].node == NULL) {
     sl_list_append((*table)->list, node);
     (*table)->array[hash].node = node;
+#ifdef USE_CHAIN_POINTER_N_OPTIMIZATION
+    (*table)->array[hash].n = 1;
+#endif
     (*table)->buckets_used++;
     return 0;
   }
 
-  /* collision = sl_node_get_n_next((*table)->array[hash].node, 0); */
   sl_list_insert_after((*table)->list, (*table)->array[hash].node, node);
   (*table)->collisions++;
-  /* (*table)->array[hash].n++; */
+#ifdef USE_CHAIN_POINTER_N_OPTIMIZATION
+  (*table)->array[hash].n++;
+#endif
 
   return 0;
 }
 
 struct pair_t *hash_table_lookup(struct hash_table_t *table, char *key) {
   struct sl_node_t *find;
-  unsigned long hash, temphash;
+  unsigned long hash;
+#ifndef USE_CHAIN_POINTER_N_OPTIMIZATION
+  unsigned long temphash;
+#else
   int i;
+#endif
 
   assert(table);
   assert(key);
 
+#ifndef USE_CHAIN_POINTER_N_OPTIMIZATION
   hash = temphash = table->hash_func(key) % (table->size);
+#else
+  hash = table->hash_func(key) % (table->size);
+#endif
+
   find = table->array[hash].node;
 
   if (!find) {
@@ -213,6 +229,7 @@ struct pair_t *hash_table_lookup(struct hash_table_t *table, char *key) {
   }
 
   /* If a node is found then linked list is seached for a node with specified key */
+#ifndef USE_CHAIN_POINTER_N_OPTIMIZATION
   while (temphash == hash) {
     if (strcmp(((struct pair_t *)sl_node_get_data(find))->key, key) == 0) {
       return (struct pair_t *)sl_node_get_data(find);
@@ -223,6 +240,14 @@ struct pair_t *hash_table_lookup(struct hash_table_t *table, char *key) {
     }
     temphash = table->hash_func(((struct pair_t *)sl_node_get_data(find))->key) % (table->size);
   }
+#else
+  for (i = table->array[hash].n; i > 0; i--) {
+    if (strcmp(((struct pair_t *)sl_node_get_data(find))->key, key) == 0) {
+      return (struct pair_t *)sl_node_get_data(find);
+    }
+    find = sl_node_get_n_next(find, 1);
+  }
+#endif
 
   return NULL;
 }
@@ -238,16 +263,21 @@ void resize_node_callback(struct sl_node_t *node, struct sl_list_t *list, va_lis
   if (table->array[hash].node == NULL) {
     sl_list_push(table->list, node);
     table->array[hash].node = node;
+#ifdef USE_CHAIN_POINTER_N_OPTIMIZATION
+    table->array[hash].n = 1;
+#endif
     table->buckets_used++;
     return;
   }
 
+#ifdef USE_CHAIN_POINTER_N_OPTIMIZATION
+  table->array[hash].n++;
+#endif
   sl_list_insert_after(table->list, table->array[hash].node, node);
   table->collisions++;
 }
 
 struct hash_table_t *hash_table_resize(struct hash_table_t **table, size_t size) {
-  struct hash_table_t *new_table;
   struct sl_list_t *old;
 
   assert(table);
@@ -258,11 +288,15 @@ struct hash_table_t *hash_table_resize(struct hash_table_t **table, size_t size)
   (*table) = realloc(*table, sizeof(struct hash_table_t) + sizeof(struct chain_pointer_t) * (*table)->size);
 
   if (!(*table)) {
-    sl_list_free(old, ((void *)(void *)pair_free));
+    sl_list_free(old, ((void *)pair_free));
     return NULL;
   }
 
   (*table)->list = sl_list_init();
+  if (!(*table)->list) {
+    sl_list_free(old, (void *)pair_free);
+    free(*table);
+  }
 
   memset((*table)->array, 0, sizeof(struct chain_pointer_t) * size);
   (*table)->buckets_used = 0;

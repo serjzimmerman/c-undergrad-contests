@@ -169,20 +169,18 @@ void sl_list_remove_node(struct sl_list_t *const list, struct sl_node_t *prev, s
 
 void sl_list_iterate_over_nodes(struct sl_list_t *const list,
                                 void (*callback)(struct sl_node_t *node, struct sl_list_t *list, va_list argp), ...) {
-  struct sl_node_t *curr, *prev, *next;
+  struct sl_node_t *curr, *next;
   va_list argp, argcopy;
 
   assert(list);
 
   va_start(argp, callback);
   curr = list->head;
-  prev = NULL;
 
   while (curr) {
     va_copy(argcopy, argp);
     next = curr->next;
     callback(curr, list, argcopy);
-    prev = curr;
     curr = next;
     va_end(argcopy);
   }
