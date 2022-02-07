@@ -94,6 +94,12 @@ pair_val_t pair_get_value(struct pair_t *pair) {
   return pair->value;
 }
 
+const char *pair_get_key(struct pair_t *pair) {
+  assert(pair);
+
+  return pair->key;
+}
+
 struct hash_table_t *hash_table_init(size_t size, unsigned long (*hash)(const char *)) {
   struct hash_table_t *table;
 
@@ -306,4 +312,17 @@ struct hash_table_t *hash_table_resize(struct hash_table_t **table, size_t size)
   sl_list_free(old, (void *)(void *)pair_free);
 
   return (*table);
+}
+
+struct sl_list_t *hash_table_get_linked_list(struct hash_table_t *table, int free_table) {
+  struct sl_list_t *list;
+
+  assert(table);
+
+  list = table->list;
+  if (free_table) {
+    free(table);
+  }
+
+  return list;
 }

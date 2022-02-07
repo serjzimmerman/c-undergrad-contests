@@ -20,7 +20,7 @@ struct cmd_args_t {
   char *input_path;
 } cmd_args_default = {NULL};
 
-const char *const usage_string = "Usage: test [-i <path>] [-o <path>]\n";
+const char *const usage_string = "Usage: test [-i <path>]\n";
 
 int handle_input(int argc, char **argv, struct cmd_args_t *args) {
   int c, p = 0;
@@ -112,7 +112,7 @@ void application_loop_read_file(struct cmd_args_t args) {
           hash_table_get_collisions(counter_get_hashtable(counter)),
           hash_table_get_inserts(counter_get_hashtable(counter)), hash_table_get_size(counter_get_hashtable(counter)));
 #endif
-  counter_free(counter);
+  counter_free(counter, 1);
 
   munmap(buf, len);
   close(fdi);
@@ -180,7 +180,7 @@ void application_loop_read_stdin() {
           hash_table_get_collisions(counter_get_hashtable(counter)),
           hash_table_get_inserts(counter_get_hashtable(counter)), hash_table_get_size(counter_get_hashtable(counter)));
 #endif
-  counter_free(counter);
+  counter_free(counter, 1);
 }
 
 int main(int argc, char **argv) {

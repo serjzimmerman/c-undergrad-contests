@@ -8,3 +8,4 @@ add_compile_options(-Wall -Wextra)
 add_link_options("$<$<CONFIG:DEBUG>:-pg>")
 
 add_subdirectory(lib)
+add_subdirectory(app)

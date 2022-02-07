@@ -22,10 +22,12 @@ struct counter_t *counter_init(unsigned long (*hash)(const char *)) {
   return counter;
 }
 
-void counter_free(struct counter_t *counter) {
+void counter_free(struct counter_t *counter, int free_table) {
   assert(counter);
 
-  hash_table_free(counter->table);
+  if (free_table) {
+    hash_table_free(counter->table);
+  }
 
   free(counter);
 }
