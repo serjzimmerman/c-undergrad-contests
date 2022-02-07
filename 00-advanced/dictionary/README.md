@@ -13,8 +13,6 @@ cmake -S ./ -B build/ DCMAKE_BUILD_TYPE=Debug
 cd build/
 make install
 # Installs wordcount application to app/bin/ and two test programs to lib/hashtable/test/bin/
-
-# To individually 
 ```
 
 ## 2. Wordcount application
