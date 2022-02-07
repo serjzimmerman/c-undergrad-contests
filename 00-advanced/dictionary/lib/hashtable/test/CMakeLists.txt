@@ -3,6 +3,10 @@ set (APP_SOURCES
   src/util.c
 )
 
-add_executable(test ${APP_SOURCES})
-target_link_libraries(test llistc hashtable)
-install(TARGETS test DESTINATION ${CMAKE_CURRENT_LIST_DIR}/bin)
+add_executable(testmemoryoptimized ${APP_SOURCES})
+target_link_libraries(testmemoryoptimized llistc hashtable)
+
+add_executable(testspeedoptimized ${APP_SOURCES})
+target_link_libraries(testspeedoptimized llistc hashtable)
+
+install(TARGETS testmemoryoptimized testspeedoptimized DESTINATION ${CMAKE_CURRENT_LIST_DIR}/bin)
