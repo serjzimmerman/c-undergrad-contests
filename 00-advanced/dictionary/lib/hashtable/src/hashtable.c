@@ -1,7 +1,3 @@
-#ifdef D_DEBUG
-#define NDEBUG
-#endif
-
 /* Asserts only in debug build type, in release mode pointers are assumed to be valid */
 #include <assert.h>
 #include <stdio.h>
