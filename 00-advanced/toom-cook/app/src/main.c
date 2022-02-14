@@ -19,8 +19,8 @@ int main() {
   int array[3][3] = {{2, -1, 0}, {0, 2, -1}, {-1, -1, 1}};
 
   struct matn_t *mat = matn_init_from_num_array(&array[0][0], 3, 3);
-  matn_convert_to_row_echelon(mat);
+  struct matn_t *inv = matn_find_inverse(mat);
 
-  matn_print(mat);
+  matn_print(inv);
   matn_free(mat);
 }
