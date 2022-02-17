@@ -1,7 +1,3 @@
-#ifdef D_DEBUG
-#define NDEBUG
-#endif
-
 #include "mat.h"
 #include <assert.h>
 #include <stdio.h>
@@ -22,6 +18,10 @@ struct matn_t *matn_init(size_t n, size_t m) {
   if (!mat->array) {
     free(mat);
     return NULL;
+  }
+
+  for (size_t i = 0; i < n * m; i++) {
+    mat->array[i] = frac_from_num(0);
   }
 
   for (size_t i = 0; i < n; i++) {
