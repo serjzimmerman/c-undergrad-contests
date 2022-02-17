@@ -1,7 +1,3 @@
-#ifdef D_DEBUG
-#define NDEBUG
-#endif
-
 #include "frac.h"
 #include <assert.h>
 
@@ -72,9 +68,14 @@ struct frac_t frac_mult_frac(struct frac_t a, struct frac_t b) {
   assert(a.denominator);
   assert(b.denominator);
 
+  if (a.numerator == 0 || b.numerator == 0) {
+    r.numerator = 0;
+    r.denominator = 1;
+    return r;
+  }
+
   r.numerator = a.numerator * b.numerator;
   r.denominator = a.denominator * b.denominator;
-
   int g = gcd(iabs(r.numerator), r.denominator);
 
   if (r.numerator == 0) {

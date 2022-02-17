@@ -1,10 +1,15 @@
-#include "frac.h"
-#include "mat.h"
-#include <assert.h>
 #include <ctype.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+
+#include "frac.h"
+#include "mat.h"
+#include "poly.h"
+
+#undef NDEBUG
+
+#include <assert.h>
 
 void matn_print(struct matn_t *mat) {
   for (size_t i = 0; i < mat->n; i++) {
@@ -16,7 +21,7 @@ void matn_print(struct matn_t *mat) {
 }
 
 int main() {
-  int array[3][3] = {{2, -1, 0}, {0, 2, -1}, {-1, -1, 1}};
+  int array1[3] = {1, 2, 1}, array2[3] = {1, 2, 1};
 
   struct matn_t *mat = matn_init_from_num_array(&array[0][0], 3, 3);
   struct matn_t *inv = matn_find_inverse(mat);
