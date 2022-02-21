@@ -145,25 +145,73 @@ void get_node_binary(struct tnode_t *node, struct tbinary_t *binary) {
   }
 }
 
-struct tnode_t *tree_generate_from_traverse(int *inorder, unsigned inl, int *preorder, unsigned prel) {
+int *linsearch(int *data, int search, size_t num) {
+  size_t i;
+
+  for (i = 0; i < num; i++) {
+    if (data[i] == search) {
+      return &data[i];
+    }
+  }
+
+  return NULL;
+}
+
+struct tnode_t *tree_generate_from_traverse(int *inorder, unsigned len, int *preorder) {
+  struct tnode_t *root;
+  int *rootvalue, newlen;
+
+  if (!len) {
+    return NULL;
+  }
+
+  root = node_init(NULL, NULL, preorder[0]);
+  rootvalue = linsearch(inorder, preorder[0], len);
+
+  assert(rootvalue);
+  newlen = rootvalue - inorder;
+
+  root->left = tree_generate_from_traverse(&inorder[0], newlen, &preorder[1]);
+  root->right = tree_generate_from_traverse(rootvalue + 1, len - 1 - newlen, &preorder[newlen + 1]);
+
+  return root;
 }
 
 int main() {
-  struct tnode_t *a = node_init(NULL, NULL, 1);
-  struct tnode_t *b = node_init(NULL, NULL, 2);
-  struct tnode_t *c = node_init(a, NULL, 3);
-  struct tnode_t *d = node_init(b, NULL, 0);
-  struct tnode_t *r = node_init(c, d, 4);
+  size_t len, i;
 
-  struct tbinary_t *binary = node_binary_init(1);
+  int *inorder, *preorder;
+  struct tnode_t *root;
+  struct tbinary_t *bin;
 
-  get_node_binary(r, binary);
-  node_binary_print(binary);
-  node_binary_free(binary);
+  scanf("%lu", &len);
 
-  free(a);
-  free(b);
-  free(c);
-  free(d);
-  free(r);
+  inorder = calloc(len, sizeof(int));
+  if (!inorder) {
+    fprintf(stderr, "Unable to allocate memory\n");
+    exit(EXIT_FAILURE);
+  }
+
+  preorder = calloc(len, sizeof(int));
+  if (!preorder) {
+    fprintf(stderr, "Unable to allocate memory\n");
+    exit(EXIT_FAILURE);
+  }
+
+  for (i = 0; i < len; i++) {
+    scanf("%d", &preorder[i]);
+  }
+
+  for (i = 0; i < len; i++) {
+    scanf("%d", &inorder[i]);
+  }
+
+  root = tree_generate_from_traverse(inorder, len, preorder);
+  bin = node_binary_init(12);
+  get_node_binary(root, bin);
+
+  printf("%ld ", len);
+  node_binary_print(bin);
+
+  node_binary_free(bin);
 }
