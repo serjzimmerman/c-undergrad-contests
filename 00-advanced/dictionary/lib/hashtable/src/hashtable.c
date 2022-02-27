@@ -6,11 +6,7 @@
 
 #include "hashtable.h"
 #include "sllistc.h"
-
-struct pair_t {
-  void *key;
-  pair_val_t value;
-};
+#include "spair.h"
 
 struct chain_pointer_t {
   struct sl_node_t *node;
@@ -23,83 +19,17 @@ struct hash_table_t {
   struct sl_list_t *list;
   size_t size, buckets_used, inserts;
   size_t collisions;
-  unsigned long (*hash_func)(const char *);
+  unsigned long (*hash_func)(const void *);
+  int (*pair_cmp)(void *, void *);
   struct chain_pointer_t array[];
 };
 
-/* djb2 hash function http://www.cse.yorku.ca/~oz/hash.html */
-unsigned long hash_djb2(const char *str) {
-  unsigned long hash = 5381;
-  int c;
-
-  assert(str);
-
-  while ((c = *(str++))) {
-    hash = ((hash << 5) + hash) + c; /* hash * 33 + c */
-  }
-
-  return hash;
-}
-
-struct pair_t *pair_init(const char *key, pair_val_t value) {
-  struct pair_t *pair;
-  size_t len;
-
-  assert(key);
-
-  if (!key) {
-    return NULL;
-  }
-
-  pair = calloc(1, sizeof(struct pair_t));
-
-  if (!pair) {
-    return NULL;
-  }
-
-  len = strlen(key);
-  pair->key = calloc(1, (len + 1) * sizeof(char));
-
-  if (!pair->key) {
-    free(pair);
-    return NULL;
-  }
-
-  memcpy(pair->key, key, len);
-  pair->value = value;
-
-  return pair;
-}
-
-void pair_free(struct pair_t *pair) {
-  assert(pair);
-
-  free(pair->key);
-  free(pair);
-}
-
-void pair_set_value(struct pair_t *pair, pair_val_t value) {
-  assert(pair);
-
-  pair->value = value;
-}
-
-pair_val_t pair_get_value(struct pair_t *pair) {
-  assert(pair);
-
-  return pair->value;
-}
-
-const char *pair_get_key(struct pair_t *pair) {
-  assert(pair);
-
-  return pair->key;
-}
-
-struct hash_table_t *hash_table_init(size_t size, unsigned long (*hash)(const char *)) {
+struct hash_table_t *hash_table_init(size_t size, unsigned long (*hash)(const void *), int (*cmp)(void *, void *)) {
   struct hash_table_t *table;
 
   assert(size);
+  assert(pair_cmp);
+  assert(hash);
 
   table = calloc(1, sizeof(struct hash_table_t) + sizeof(struct chain_pointer_t) * size);
 
@@ -107,16 +37,9 @@ struct hash_table_t *hash_table_init(size_t size, unsigned long (*hash)(const ch
     return NULL;
   }
 
-  if (hash) {
-    table->hash_func = hash;
-  } else {
-    table->hash_func = hash_djb2;
-  }
-
+  table->hash_func = hash;
+  table->pair_cmp = cmp;
   table->size = size;
-  table->buckets_used = 0;
-  table->collisions = 0;
-  table->inserts = 0;
   table->list = sl_list_init();
 
   if (!table->list) {
@@ -160,7 +83,7 @@ size_t hash_table_get_inserts(struct hash_table_t *table) {
 
 #define HASH_TABLE_LOAD_FACTOR 0.7f
 
-int hash_table_insert(struct hash_table_t **table, struct pair_t *pair) {
+int hash_table_insert(struct hash_table_t **table, spair_t pair) {
   struct sl_node_t *node;
   unsigned long hash;
   float load_factor;
@@ -178,7 +101,7 @@ int hash_table_insert(struct hash_table_t **table, struct pair_t *pair) {
     return 1;
   }
 
-  hash = (*table)->hash_func(pair->key) % ((*table)->size);
+  hash = (*table)->hash_func(pair) % ((*table)->size);
   node = sl_node_init();
   if (!node) {
     return 1;
@@ -206,7 +129,7 @@ int hash_table_insert(struct hash_table_t **table, struct pair_t *pair) {
   return 0;
 }
 
-struct pair_t *hash_table_lookup(struct hash_table_t *table, char *key) {
+void *hash_table_lookup(struct hash_table_t *table, void *key) {
   struct sl_node_t *find;
   unsigned long hash;
 #ifndef USE_CHAIN_POINTER_N_OPTIMIZATION
@@ -233,19 +156,19 @@ struct pair_t *hash_table_lookup(struct hash_table_t *table, char *key) {
   /* If a node is found then linked list is seached for a node with specified key */
 #ifndef USE_CHAIN_POINTER_N_OPTIMIZATION
   while (temphash == hash) {
-    if (strcmp(((struct pair_t *)sl_node_get_data(find))->key, key) == 0) {
-      return (struct pair_t *)sl_node_get_data(find);
+    if (table->pair_cmp(sl_node_get_data(find), key) == 0) {
+      return (struct spair_t *)sl_node_get_data(find);
     }
     find = sl_node_get_n_next(find, 1);
     if (!find) {
       break;
     }
-    temphash = table->hash_func(((struct pair_t *)sl_node_get_data(find))->key) % (table->size);
+    temphash = table->hash_func(sl_node_get_data(find)) % (table->size);
   }
 #else
   for (i = table->array[hash].n; i > 0; i--) {
-    if (strcmp(((struct pair_t *)sl_node_get_data(find))->key, key) == 0) {
-      return (struct pair_t *)sl_node_get_data(find);
+    if (table->pair_cmp(sl_node_get_data(find), key) == 0) {
+      return sl_node_get_data(find);
     }
     find = sl_node_get_n_next(find, 1);
   }
@@ -259,7 +182,7 @@ void resize_node_callback(struct sl_node_t *node, struct sl_list_t *list, va_lis
   unsigned long hash;
 
   table = va_arg(argp, struct hash_table_t *);
-  hash = table->hash_func(((struct pair_t *)sl_node_get_data(node))->key) % (table->size);
+  hash = table->hash_func(sl_node_get_data(node)) % (table->size);
   sl_list_remove_node(list, NULL, node);
 
   if (table->array[hash].node == NULL) {

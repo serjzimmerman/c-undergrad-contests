@@ -25,6 +25,8 @@ struct tree_t *tree_right_most(struct tree_t *root) {
   return root;
 }
 
+/* O(n * log(n)) */
+
 int check_is_bst(struct tree_t *top) {
   if (!top || (!top->left && !top->right)) {
     return 1;
