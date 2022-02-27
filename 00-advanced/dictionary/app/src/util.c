@@ -17,12 +17,8 @@ char *stolower(char *src) {
   return old;
 }
 
-int pair_cmp(void *a, void *b) {
-  return (pair_get_value((struct pair_t *)a) - pair_get_value((struct pair_t *)b));
-}
-
 void print_callback(struct sl_node_t *node, struct sl_list_t *list, va_list argp) {
-  struct pair_t *pair;
+  struct spair_t *pair;
   FILE *fs;
 
   fs = va_arg(argp, FILE *);

@@ -1,6 +1,7 @@
 set(LIB_SOURCES
     src/hashtable.c
     src/counter.c
+    src/spair.c
 )
 
 # add_compile_definitions(USE_CHAIN_POINTER_N_OPTIMIZATION)

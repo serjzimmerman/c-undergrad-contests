@@ -6,7 +6,7 @@
 
 struct counter_t;
 
-struct counter_t *counter_init(unsigned long (*hash)(const char *));
+struct counter_t *counter_init();
 void counter_item_add(struct counter_t *counter, char *key);
 unsigned counter_item_get_count(struct counter_t *counter, char *key);
 void counter_free(struct counter_t *counter, int free_table);

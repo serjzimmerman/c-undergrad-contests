@@ -1,5 +1,6 @@
 #include "counter.h"
 #include "hashtable.h"
+#include "spair.h"
 
 #include <assert.h>
 #include <stdlib.h>
@@ -10,13 +11,13 @@ struct counter_t {
   struct hash_table_t *table;
 };
 
-struct counter_t *counter_init(unsigned long (*hash)(const char *)) {
+struct counter_t *counter_init() {
   struct counter_t *counter;
 
   counter = calloc(1, sizeof(struct counter_t));
   assert(counter);
 
-  counter->table = hash_table_init(DEFAULT_COUNTER_SIZE, hash);
+  counter->table = hash_table_init(DEFAULT_COUNTER_SIZE, pair_hash_djb2, pair_cmp);
   assert(counter->table);
 
   return counter;
@@ -33,9 +34,11 @@ void counter_free(struct counter_t *counter, int free_table) {
 }
 
 void counter_item_add(struct counter_t *counter, char *key) {
-  struct pair_t *pair;
+  struct spair_s find;
+  spair_t pair;
+  find.key = key;
 
-  pair = hash_table_lookup(counter->table, key);
+  pair = hash_table_lookup(counter->table, &find);
 
   if (pair) {
     pair_set_value(pair, pair_get_value(pair) + 1);
@@ -46,9 +49,11 @@ void counter_item_add(struct counter_t *counter, char *key) {
 }
 
 unsigned counter_item_get_count(struct counter_t *counter, char *key) {
-  struct pair_t *pair;
+  struct spair_s find;
+  spair_t pair;
+  find.key = key;
 
-  pair = hash_table_lookup(counter->table, key);
+  pair = hash_table_lookup(counter->table, &find);
 
   if (pair) {
     return pair_get_value(pair);
