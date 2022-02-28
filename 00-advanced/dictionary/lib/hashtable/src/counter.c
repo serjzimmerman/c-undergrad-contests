@@ -17,7 +17,7 @@ struct counter_t *counter_init() {
   counter = calloc(1, sizeof(struct counter_t));
   assert(counter);
 
-  counter->table = hash_table_init(DEFAULT_COUNTER_SIZE, pair_hash_djb2, pair_cmp);
+  counter->table = hash_table_init(DEFAULT_COUNTER_SIZE, spair_hash_djb2, spair_cmp, spair_free);
   assert(counter->table);
 
   return counter;
@@ -41,9 +41,9 @@ void counter_item_add(struct counter_t *counter, char *key) {
   pair = hash_table_lookup(counter->table, &find);
 
   if (pair) {
-    pair_set_value(pair, pair_get_value(pair) + 1);
+    spair_set_value(pair, spair_get_value(pair) + 1);
   } else {
-    pair = pair_init(key, 1);
+    pair = spair_init(key, 1);
     hash_table_insert(&counter->table, pair);
   }
 }
@@ -56,7 +56,7 @@ unsigned counter_item_get_count(struct counter_t *counter, char *key) {
   pair = hash_table_lookup(counter->table, &find);
 
   if (pair) {
-    return pair_get_value(pair);
+    return spair_get_value(pair);
   } else {
     return 0;
   }

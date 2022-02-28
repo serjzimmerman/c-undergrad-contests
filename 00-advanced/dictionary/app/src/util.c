@@ -24,7 +24,7 @@ void print_callback(struct sl_node_t *node, struct sl_list_t *list, va_list argp
   fs = va_arg(argp, FILE *);
   pair = sl_node_get_data(node);
 
-  fprintf(fs, "%s -- %u\n", pair_get_key(pair), pair_get_value(pair));
+  fprintf(fs, "%s -- %u\n", spair_get_key(pair), spair_get_value(pair));
 }
 
 void sl_list_print(struct sl_list_t *list, FILE *fs) {

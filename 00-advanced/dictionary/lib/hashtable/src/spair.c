@@ -17,11 +17,11 @@ unsigned long hash_djb2(const char *str) {
   return hash;
 }
 
-unsigned long pair_hash_djb2(const void *pair) {
+unsigned long spair_hash_djb2(const void *pair) {
   return hash_djb2(((struct spair_s *)pair)->key);
 }
 
-spair_t pair_init(const char *key, pair_val_t value) {
+spair_t spair_init(const char *key, pair_val_t value) {
   struct spair_s *pair;
   size_t len;
 
@@ -51,31 +51,31 @@ spair_t pair_init(const char *key, pair_val_t value) {
   return (spair_t)pair;
 }
 
-void pair_free(spair_t pair) {
+void spair_free(spair_t pair) {
   assert(pair);
 
   free(((struct spair_s *)pair)->key);
   free(pair);
 }
 
-void pair_set_value(spair_t pair, pair_val_t value) {
+void spair_set_value(spair_t pair, pair_val_t value) {
   assert(pair);
 
   ((struct spair_s *)pair)->value = value;
 }
 
-pair_val_t pair_get_value(spair_t pair) {
+pair_val_t spair_get_value(spair_t pair) {
   assert(pair);
 
   return ((struct spair_s *)pair)->value;
 }
 
-const char *pair_get_key(spair_t pair) {
+const char *spair_get_key(spair_t pair) {
   assert(pair);
 
   return ((struct spair_s *)pair)->key;
 }
 
-int pair_cmp(spair_t a, spair_t b) {
+int spair_cmp(spair_t a, spair_t b) {
   return strcmp(((struct spair_s *)a)->key, ((struct spair_s *)b)->key);
 }

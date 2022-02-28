@@ -6,7 +6,6 @@
 
 #include "hashtable.h"
 #include "sllistc.h"
-#include "spair.h"
 
 struct chain_pointer_t {
   struct sl_node_t *node;
@@ -21,14 +20,16 @@ struct hash_table_t {
   size_t collisions;
   unsigned long (*hash_func)(const void *);
   int (*pair_cmp)(void *, void *);
+  void (*pair_free)(void *);
   struct chain_pointer_t array[];
 };
 
-struct hash_table_t *hash_table_init(size_t size, unsigned long (*hash)(const void *), int (*cmp)(void *, void *)) {
+struct hash_table_t *hash_table_init(size_t size, unsigned long (*hash)(const void *), int (*cmp)(void *, void *),
+                                     void (*pair_free)(void *)) {
   struct hash_table_t *table;
 
   assert(size);
-  assert(pair_cmp);
+  assert(cmp);
   assert(hash);
 
   table = calloc(1, sizeof(struct hash_table_t) + sizeof(struct chain_pointer_t) * size);
@@ -39,6 +40,7 @@ struct hash_table_t *hash_table_init(size_t size, unsigned long (*hash)(const vo
 
   table->hash_func = hash;
   table->pair_cmp = cmp;
+  table->pair_free = pair_free;
   table->size = size;
   table->list = sl_list_init();
 
@@ -53,7 +55,7 @@ struct hash_table_t *hash_table_init(size_t size, unsigned long (*hash)(const vo
 void hash_table_free(struct hash_table_t *table) {
   assert(table);
 
-  sl_list_free(table->list, ((void *)(void *)pair_free));
+  sl_list_free(table->list, table->pair_free);
   free(table);
 }
 
@@ -157,7 +159,7 @@ void *hash_table_lookup(struct hash_table_t *table, void *key) {
 #ifndef USE_CHAIN_POINTER_N_OPTIMIZATION
   while (temphash == hash) {
     if (table->pair_cmp(sl_node_get_data(find), key) == 0) {
-      return (struct spair_t *)sl_node_get_data(find);
+      return sl_node_get_data(find);
     }
     find = sl_node_get_n_next(find, 1);
     if (!find) {
@@ -213,13 +215,13 @@ struct hash_table_t *hash_table_resize(struct hash_table_t **table, size_t size)
   (*table) = realloc(*table, sizeof(struct hash_table_t) + sizeof(struct chain_pointer_t) * (*table)->size);
 
   if (!(*table)) {
-    sl_list_free(old, ((void *)pair_free));
+    sl_list_free(old, (*table)->pair_free);
     return NULL;
   }
 
   (*table)->list = sl_list_init();
   if (!(*table)->list) {
-    sl_list_free(old, (void *)pair_free);
+    sl_list_free(old, (*table)->pair_free);
     free(*table);
   }
 
@@ -228,7 +230,7 @@ struct hash_table_t *hash_table_resize(struct hash_table_t **table, size_t size)
   (*table)->collisions = 0;
 
   sl_list_iterate_over_nodes(old, resize_node_callback, (*table), old);
-  sl_list_free(old, (void *)(void *)pair_free);
+  sl_list_free(old, (*table)->pair_free);
 
   return (*table);
 }

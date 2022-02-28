@@ -8,7 +8,8 @@
 
 struct hash_table_t;
 
-struct hash_table_t *hash_table_init(size_t size, unsigned long (*hash)(const void *), int (*pair_cmp)(void *, void *));
+struct hash_table_t *hash_table_init(size_t size, unsigned long (*hash)(const void *), int (*pair_cmp)(void *, void *),
+                                     void (*pair_free)(void *));
 void hash_table_free(struct hash_table_t *table);
 int hash_table_insert(struct hash_table_t **table, spair_t pair);
 void *hash_table_lookup(struct hash_table_t *table, void *key);

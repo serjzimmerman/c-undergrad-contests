@@ -7,5 +7,9 @@ add_compile_options("$<$<CONFIG:DEBUG>:-pg>")
 add_compile_options(-Wall -Wextra)
 add_link_options("$<$<CONFIG:DEBUG>:-pg>")
 
+if(VERBOSE)
+  add_compile_definitions(VERBOSE)
+endif()
+
 add_subdirectory(lib)
 add_subdirectory(app)

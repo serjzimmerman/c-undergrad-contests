@@ -121,7 +121,7 @@ void application_loop_read_file(struct cmd_args_t args) {
   }
 
   list = hash_table_get_linked_list(counter_get_hashtable(counter), 1);
-  sl_list_merge_sort(list, pair_cmp);
+  sl_list_merge_sort(list, spair_cmp);
   sl_list_print(list, fo);
 
   counter_free(counter, 0);
@@ -133,7 +133,7 @@ void application_loop_read_file(struct cmd_args_t args) {
     fclose(fo);
   }
 
-  sl_list_free(list, pair_free);
+  sl_list_free(list, spair_free);
 }
 
 int main(int argc, char **argv) {
