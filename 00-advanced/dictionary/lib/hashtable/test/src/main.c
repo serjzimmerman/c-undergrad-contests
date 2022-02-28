@@ -14,8 +14,6 @@
 #include <sys/stat.h>
 #include <unistd.h>
 
-#define PRINT_DEBUG_INFO
-
 struct cmd_args_t {
   char *input_path;
 } cmd_args_default = {NULL};
@@ -107,7 +105,7 @@ void application_loop_read_file(struct cmd_args_t args) {
     c += strtokn(NULL, " ", &tok);
   }
 
-#ifdef PRINT_DEBUG_INFO
+#ifdef VERBOSE
   fprintf(stderr, "\nCollisions: \t%ld\nInserts: \t%ld\nSize: \t\t%ld\n",
           hash_table_get_collisions(counter_get_hashtable(counter)),
           hash_table_get_inserts(counter_get_hashtable(counter)), hash_table_get_size(counter_get_hashtable(counter)));
@@ -175,7 +173,7 @@ void application_loop_read_stdin() {
   }
 
   free(buf);
-#ifdef PRINT_DEBUG_INFO
+#ifdef VERBOSE
   fprintf(stderr, "\nCollisions: \t%ld\nInserts: \t%ld\nSize: \t\t%ld\n",
           hash_table_get_collisions(counter_get_hashtable(counter)),
           hash_table_get_inserts(counter_get_hashtable(counter)), hash_table_get_size(counter_get_hashtable(counter)));
