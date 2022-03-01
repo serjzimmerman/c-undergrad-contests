@@ -3,6 +3,8 @@ project(dictionary)
 
 set(CMAKE_VERBOSE_MAKEFILE ON)
 
+option(VERBOSE "VERBOSE" OFF)
+
 add_compile_options("$<$<CONFIG:DEBUG>:-pg>")
 add_compile_options(-Wall -Wextra)
 add_link_options("$<$<CONFIG:DEBUG>:-pg>")
