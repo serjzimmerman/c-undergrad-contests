@@ -1,0 +1,8 @@
+.vscode/
+build/
+# Ignore compiled binary
+app/bin/*
+!app/bin/.keep
+gmon.out
+tests/*
+!tests/.keep
