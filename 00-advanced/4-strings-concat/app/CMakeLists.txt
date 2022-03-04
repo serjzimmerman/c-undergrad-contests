@@ -1,6 +1,7 @@
 set (APP_SOURCES
   src/main.c
   src/util.c
+  src/dspair.c
 )
 
 add_executable(fstrings ${APP_SOURCES})

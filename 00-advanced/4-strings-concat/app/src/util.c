@@ -1,4 +1,5 @@
 #include "util.h"
+#include "dspair.h"
 #include "hashtable.h"
 #include "sllistc.h"
 #include <ctype.h>
@@ -18,13 +19,13 @@ char *stolower(char *src) {
 }
 
 void print_callback(struct sl_node_t *node, struct sl_list_t *list, va_list argp) {
-  struct spair_t *pair;
+  struct dspair_s *pair;
   FILE *fs;
 
   fs = va_arg(argp, FILE *);
   pair = sl_node_get_data(node);
 
-  fprintf(fs, "%s -- %u\n", spair_get_key(pair), spair_get_value(pair));
+  fprintf(fs, "%s -- %s -- %lu\n", pair->first, pair->second, dspair_hash((dspair_t)pair));
 }
 
 void sl_list_print(struct sl_list_t *list, FILE *fs) {

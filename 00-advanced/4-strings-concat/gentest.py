@@ -1,6 +1,7 @@
 #!/usr/bin/python
 
 import random, string, sys, getopt, itertools, os
+from progress.bar import IncrementalBar
 
 usage_string = "gentest.py -n <num> -o <output>"
 
@@ -23,7 +24,7 @@ def GetRandomUnique(n, min, max):
 def GenerateRandomTest(matches, number):
     test_list = []
     for i in range(number):
-        test_list.append(GetRandomString(random.randint(2, 256)))
+        test_list.append(GetRandomString(random.randint(2, 32)))
 
     # Generate list of strings a + b = c + d
     for i in range(matches):
@@ -45,13 +46,20 @@ def GenerateRandomTest(matches, number):
 
 
 def GenerateAns(test):
+    n = len(test)
+    bar = IncrementalBar(max=n)
     map = {}
+    i = 0
     for p in itertools.permutations(test, 2):
         pair_hash = hash("".join(p))
         if pair_hash in map:
             map[pair_hash].append(p)
         else:
             map[pair_hash] = [p]
+        i += 1
+        if i == n - 1:
+            i = 0
+            bar.next()
 
     ans = []
     for key in map:
@@ -68,7 +76,7 @@ def GenerateAns(test):
                 temp = []
                 temp.extend(d[k])
                 ans.append(temp)
-
+    bar.finish()
     return ans
 
 
@@ -87,7 +95,8 @@ def generate_n_tests(args):
         os.mkdir(args.output_path)
 
     for i in range(args.number_of_tests):
-        test = GenerateRandomTest(4, 128)
+        print("Generating test #{}".format(i))
+        test = GenerateRandomTest(1024, 1024)
 
         file = open(os.path.join(args.output_path, "test{}.dat".format(i)), "w+")
         file.write("{}\n{}\n".format(len(test), " ".join(test)))
