@@ -85,7 +85,7 @@ size_t hash_table_get_inserts(struct hash_table_t *table) {
 
 #define HASH_TABLE_LOAD_FACTOR 0.7f
 
-int hash_table_insert(struct hash_table_t **table, spair_t pair) {
+int hash_table_insert(struct hash_table_t **table, void *pair) {
   struct sl_node_t *node;
   unsigned long hash;
   float load_factor;
