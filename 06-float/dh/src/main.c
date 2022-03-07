@@ -21,7 +21,7 @@ float solve_equation(float a, float b, float c, float n) {
   lval = compute_function(a, b, c, left);
   rval = compute_function(a, b, c, right);
 
-  while (lval * rval < 0) {
+  while (signbit(lval * rval)) {
     mid = (left + right) / 2;
     mval = compute_function(a, b, c, mid);
 
@@ -29,9 +29,9 @@ float solve_equation(float a, float b, float c, float n) {
       return mid;
     }
 
-    if (mval * lval < 0) {
+    if (signbit(mval * lval)) {
       right = mid;
-    } else if (mval * rval < 0) {
+    } else if (signbit(mval * rval)) {
       left = mid;
     }
   }
