@@ -118,7 +118,7 @@ struct matn_t *matn_convert_to_row_echelon(struct matn_t *mat) {
         continue;
       }
       mat_util_2array_c_sum(mat->rows[j], mat->rows[i], (-1) * mat->rows[j][z] / mat->rows[i][z], mat->m);
-      mat->rows[j][z] = 0;
+      mat->rows[j][z] = 0.f;
     }
   }
 
