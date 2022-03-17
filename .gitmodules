@@ -1,0 +1,3 @@
+[submodule "00-advanced/newton-fractal/glm"]
+	path = 00-advanced/newton-fractal/glm
+	url = https://github.com/g-truc/glm.git
