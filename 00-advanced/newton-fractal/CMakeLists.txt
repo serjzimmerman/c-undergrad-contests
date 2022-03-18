@@ -9,23 +9,19 @@ set(PROJECT_SOURCES
   src/shader.c
 )
 
+add_subdirectory(lib)
+
 add_definitions(-DVERBOSE)
 add_executable(newton-fractal ${PROJECT_SOURCES})
+add_dependencies(newton-fractal hashtable)
 
 # glfw
 find_package(glfw3 REQUIRED)
-include_directories(${GLFW_INCLUDE_DIRS})
-link_libraries(${GLFW_LIBRARY_DIRS})
-
 # opengl
 find_package(OpenGL REQUIRED)
-include_directories(${OPENGL_INCLUDE_DIRS})
-
 # glew
 find_package(GLEW REQUIRED)
-include_directories(${GLEW_INCLUDE_DIRS})
 
-include_directories(${GLEW_INCLUDE_DIRS})
-target_link_libraries(newton-fractal glfw ${OPENGL_LIBRARIES} ${GLEW_LIBRARIES} m)
-
+target_link_libraries(newton-fractal glfw ${OPENGL_LIBRARIES} ${GLFW_LIBRARY_DIRS} ${GLEW_LIBRARIES} m hashtable)
+target_include_directories(newton-fractal PRIVATE ${GLFW_INCLUDE_DIRS} ${OPENGL_INCLUDE_DIRS} ${GLEW_INCLUDE_DIRS})
 install(TARGETS newton-fractal DESTINATION ${CMAKE_CURRENT_SOURCE_DIR})
