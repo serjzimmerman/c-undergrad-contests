@@ -9,7 +9,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/time.h>
-#include <sys/timeb.h>
 #include <time.h>
 
 #include "logger.h"
@@ -17,10 +16,6 @@
 
 void framebuffer_size_callback(GLFWwindow *window, int width, int height);
 void processInput(GLFWwindow *window);
-
-// settings
-const unsigned int SCR_WIDTH = 1920;
-const unsigned int SCR_HEIGHT = 1080;
 
 long long GetMillis() {
   struct timeval te;
@@ -39,7 +34,7 @@ int main() {
   glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
   glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
 
-  GLFWwindow *window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, "LearnOpenGL", NULL, NULL);
+  GLFWwindow *window = glfwCreateWindow(1920, 1080, "LearnOpenGL", NULL, NULL);
   glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 
   if (window == NULL) {
@@ -56,15 +51,19 @@ int main() {
     exit(EXIT_FAILURE);
   }
 
-  shader_set_folder("shaders/");
+  shader_manager_t *manager = shader_manager_init("shaders/");
+  if (!manager) {
+    logger("Unable to initialize shader manager");
+    exit(EXIT_FAILURE);
+  }
 
-  GLuint vertex_shader = shader_compile("vertex.vs", GL_VERTEX_SHADER);
+  GLuint vertex_shader = shader_manager_get(manager, "vertex.vs", GL_VERTEX_SHADER);
+  GLuint frag_shader = shader_manager_get(manager, "frag.fs", GL_FRAGMENT_SHADER);
 
   if (vertex_shader == 0) {
     logger("Error compiling vertex shader\n");
     exit(EXIT_FAILURE);
   }
-  GLuint frag_shader = shader_compile("frag.fs", GL_FRAGMENT_SHADER);
   if (frag_shader == 0) {
     logger("Error compiling fragment shader\n");
     exit(EXIT_FAILURE);
