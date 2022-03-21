@@ -10,7 +10,7 @@ char *strcat_r(char *dest, const char *src, int *bufsz) {
 
   if (*bufsz < (dlen + slen + 1)) {
     *bufsz = dlen + slen + 1;
-    dest = (char *)realloc(dest, sizeof(char) * (*bufsz));
+    dest   = (char *)realloc(dest, sizeof(char) * (*bufsz));
   }
 
   while (dest[i] != '\0') {
@@ -27,10 +27,10 @@ char *strcat_r(char *dest, const char *src, int *bufsz) {
 
 int main() {
   char *dest, *src;
-  int size = 20;
+  int   size = 20;
 
   dest = calloc(20, sizeof(char));
-  src = calloc(20, sizeof(char));
+  src  = calloc(20, sizeof(char));
 
   strcpy(src, "Hello, World!");
   strcpy(dest, "1232212");

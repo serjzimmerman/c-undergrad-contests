@@ -16,8 +16,8 @@ void inssort(int *arr, int len) {
   int i;
   for (i = 0; i < len; ++i) {
     int key, pos;
-    key = arr[i];
-    pos = moveright(arr, key, i);
+    key      = arr[i];
+    pos      = moveright(arr, key, i);
     arr[pos] = key;
   }
 }

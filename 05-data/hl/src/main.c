@@ -6,7 +6,7 @@
 
 struct node_t {
   struct node_t *next;
-  int data;
+  int            data;
 };
 
 struct node_t *node_init(int data) {
@@ -45,7 +45,7 @@ int list_is_a_loop(struct node_t *top) {
 int main() {
   struct node_t *top;
 
-  top = node_init(0);
+  top       = node_init(0);
   top->next = node_init(0);
 
   top->next->next = top->next;

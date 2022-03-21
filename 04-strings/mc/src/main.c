@@ -14,7 +14,7 @@ void set_min(struct min_path *min, int val) {
       min->min = val;
     }
   } else {
-    min->min = val;
+    min->min  = val;
     min->init = 1;
   }
 }
@@ -28,21 +28,21 @@ int int_cmp(const int *x, const int *y) {
 }
 
 int money_change(int money, int *coins, int *buf, int nc, int bufsz) {
-  int i, j, c;
+  int             i, j, c;
   struct min_path min = {0};
-  
+
   buf[0] = 0;
 
   for (i = 1; i <= money; i++) {
     min.init = 0;
-    min.min = 0;
+    min.min  = 0;
 
     for (j = 0; j < nc && (c = i - coins[j]) >= 0; j++) {
       if (buf[c] != -1) {
         set_min(&min, buf[c]);
       }
     }
-    
+
     if (min.init) {
       buf[i] = min.min + 1;
     } else {
@@ -57,25 +57,25 @@ int main() {
   int money, nc, *coins, *buf, i;
 
   scanf("%d %d", &money, &nc);
-  
+
   coins = (int *)calloc(nc, sizeof(int));
-  
+
   for (i = 0; i < nc; i++) {
     scanf("%d", &coins[i]);
   }
-  
+
   qsort(coins, nc, sizeof(int), int_cmp);
-  
+
   buf = (int *)calloc(money + 1, sizeof(int));
 
   printf("%d\n", money_change(money, coins, buf, nc, money + 1));
-  
+
   /* for (i = 0; i <= money; i++) {
     printf("%d, ", buf[i]);
   } */
 
   free(coins);
-  free(buf); 
-  
+  free(buf);
+
   return 0;
 }

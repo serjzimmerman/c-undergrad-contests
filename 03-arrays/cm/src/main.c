@@ -4,7 +4,7 @@
 #include <string.h>
 
 typedef struct Node {
-  void *data;
+  void        *data;
   struct Node *next;
 } * node;
 
@@ -14,7 +14,7 @@ typedef struct LinkedList {
 
 typedef struct Data {
   void *data;
-  int size;
+  int   size;
 } * data_t;
 
 typedef int (*xcmp_t)(void *lhs, int lsz, void *rhs, int rsz);
@@ -57,7 +57,7 @@ int _linkedlist_pre_append_push(linkedlist list, node *newnode, void *ptr) {
       return -1;
     }
     list->first = *newnode;
-    list->last = *newnode;
+    list->last  = *newnode;
     return 0;
   }
 
@@ -72,9 +72,9 @@ int linkedlist_append(linkedlist list, void *ptr) {
   }
 
   if (newnode != list->first) {
-    newnode->next = NULL;
+    newnode->next    = NULL;
     list->last->next = newnode;
-    list->last = newnode;
+    list->last       = newnode;
   }
 
   return 0;
@@ -129,21 +129,19 @@ node _node_get_middle(node head_ref) {
   return slow;
 }
 
-node _merge_sorted_lists(node a, node b,
-                         int (*cmp_func)(void *a, void *b, xcmp_t cmp),
-                         xcmp_t cmp) {
+node _merge_sorted_lists(node a, node b, int (*cmp_func)(void *a, void *b, xcmp_t cmp), xcmp_t cmp) {
   node new_node, next_node, tail_node;
-  new_node = node_init();
+  new_node  = node_init();
   tail_node = new_node;
 
   while (a && b) {
     next_node = NULL;
     if (cmp_func(a->data, b->data, cmp) > 0) {
       next_node = b;
-      b = b->next;
+      b         = b->next;
     } else {
       next_node = a;
-      a = a->next;
+      a         = a->next;
     }
     tail_node->next = next_node;
 
@@ -162,9 +160,7 @@ node _merge_sorted_lists(node a, node b,
   return tail_node;
 }
 
-node _node_merge_sort(node head_ref,
-                      int (*cmp_func)(void *a, void *b, xcmp_t cmp),
-                      xcmp_t cmp) {
+node _node_merge_sort(node head_ref, int (*cmp_func)(void *a, void *b, xcmp_t cmp), xcmp_t cmp) {
   node middle_node, left_node, right_node;
 
   if (!head_ref || !(head_ref->next)) {
@@ -175,20 +171,17 @@ node _node_merge_sort(node head_ref,
   left_node = head_ref, right_node = middle_node->next;
   middle_node->next = NULL;
 
-  left_node = _node_merge_sort(left_node, cmp_func, cmp);
+  left_node  = _node_merge_sort(left_node, cmp_func, cmp);
   right_node = _node_merge_sort(right_node, cmp_func, cmp);
 
   return _merge_sorted_lists(left_node, right_node, cmp_func, cmp);
 }
 
-void linkedlist_merge_sort(linkedlist list,
-                           int (*cmp_func)(void *a, void *b, xcmp_t cmp),
-                           xcmp_t cmp) {
+void linkedlist_merge_sort(linkedlist list, int (*cmp_func)(void *a, void *b, xcmp_t cmp), xcmp_t cmp) {
   list->first = _node_merge_sort(list->first, cmp_func, cmp);
 }
 
-void linkedlist_iterate_over_nodes(linkedlist list,
-                                   void (*callback)(node node_to_iterate)) {
+void linkedlist_iterate_over_nodes(linkedlist list, void (*callback)(node node_to_iterate)) {
   node current_node;
 
   current_node = list->first;
@@ -213,10 +206,10 @@ void free_data_t(data_t data) {
 }
 
 linkedlist list_from_mem(void *mem, int *sizes, int nelts) {
-  data_t t;
+  data_t     t;
   linkedlist list;
-  char *curr;
-  int i;
+  char      *curr;
+  int        i;
 
   list = linkedlist_init();
   curr = (char *)mem;
@@ -235,17 +228,16 @@ linkedlist list_from_mem(void *mem, int *sizes, int nelts) {
 }
 
 void list_to_mem(linkedlist list, void *mem, int *sizes) {
-  node current_node = NULL;
+  node  current_node = NULL;
   char *curr_mem = NULL, *curr_sizes = NULL;
 
-  curr_mem = (char *)mem;
+  curr_mem   = (char *)mem;
   curr_sizes = (char *)sizes;
 
   current_node = list->first;
 
   while (current_node) {
-    memcpy(curr_mem, ((data_t)current_node->data)->data,
-           ((data_t)current_node->data)->size);
+    memcpy(curr_mem, ((data_t)current_node->data)->data, ((data_t)current_node->data)->size);
     memcpy(curr_sizes, &((data_t)current_node->data)->size, sizeof(int));
 
     curr_mem += ((data_t)current_node->data)->size;
@@ -262,11 +254,10 @@ int my_cmp(void *lhs, int lsz, void *rhs, int rsz) {
 int data_cmp(void *l, void *r, xcmp_t cmp) {
   data_t left_data, right_data;
 
-  left_data = (data_t)l;
+  left_data  = (data_t)l;
   right_data = (data_t)r;
 
-  return cmp(left_data->data, left_data->size, right_data->data,
-             right_data->size);
+  return cmp(left_data->data, left_data->size, right_data->data, right_data->size);
 }
 
 void free_data_all(linkedlist list) {
@@ -294,13 +285,13 @@ int get_sum_of_array(int *array, int nelts) {
 
 void xmsort(void *mem, int *sizes, int nelts, xcmp_t cmp) {
   linkedlist list;
-  void *new_mem;
-  int size;
+  void      *new_mem;
+  int        size;
 
   list = list_from_mem(mem, sizes, nelts);
   linkedlist_merge_sort(list, data_cmp, cmp);
 
-  size = get_sum_of_array(sizes, nelts);
+  size    = get_sum_of_array(sizes, nelts);
   new_mem = malloc(size);
 
   list_to_mem(list, new_mem, sizes);

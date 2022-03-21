@@ -16,8 +16,8 @@ struct chain_pointer_t {
 
 struct hash_table_t {
   struct sl_list_t *list;
-  size_t size, buckets_used, inserts;
-  size_t collisions;
+  size_t            size, buckets_used, inserts;
+  size_t            collisions;
   unsigned long (*hash_func)(const void *);
   int (*pair_cmp)(void *, void *);
   void (*pair_free)(void *);
@@ -39,10 +39,10 @@ struct hash_table_t *hash_table_init(size_t size, unsigned long (*hash)(const vo
   }
 
   table->hash_func = hash;
-  table->pair_cmp = cmp;
+  table->pair_cmp  = cmp;
   table->pair_free = pair_free;
-  table->size = size;
-  table->list = sl_list_init();
+  table->size      = size;
+  table->list      = sl_list_init();
 
   if (!table->list) {
     free(table);
@@ -87,8 +87,8 @@ size_t hash_table_get_inserts(struct hash_table_t *table) {
 
 int hash_table_insert(struct hash_table_t **table, void *pair) {
   struct sl_node_t *node;
-  unsigned long hash;
-  float load_factor;
+  unsigned long     hash;
+  float             load_factor;
 
   assert(table);
   assert(pair);
@@ -133,7 +133,7 @@ int hash_table_insert(struct hash_table_t **table, void *pair) {
 
 void *hash_table_lookup(struct hash_table_t *table, void *key) {
   struct sl_node_t *find;
-  unsigned long hash;
+  unsigned long     hash;
 #ifndef USE_CHAIN_POINTER_N_OPTIMIZATION
   unsigned long temphash;
 #else
@@ -181,10 +181,10 @@ void *hash_table_lookup(struct hash_table_t *table, void *key) {
 
 void resize_node_callback(struct sl_node_t *node, struct sl_list_t *list, va_list argp) {
   struct hash_table_t *table;
-  unsigned long hash;
+  unsigned long        hash;
 
   table = va_arg(argp, struct hash_table_t *);
-  hash = table->hash_func(sl_node_get_data(node)) % (table->size);
+  hash  = table->hash_func(sl_node_get_data(node)) % (table->size);
   sl_list_remove_node(list, NULL, node);
 
   if (table->array[hash].node == NULL) {
@@ -211,8 +211,8 @@ struct hash_table_t *hash_table_resize(struct hash_table_t **table, size_t size)
   assert(size);
 
   (*table)->size = size;
-  old = (*table)->list;
-  (*table) = realloc(*table, sizeof(struct hash_table_t) + sizeof(struct chain_pointer_t) * (*table)->size);
+  old            = (*table)->list;
+  (*table)       = realloc(*table, sizeof(struct hash_table_t) + sizeof(struct chain_pointer_t) * (*table)->size);
 
   if (!(*table)) {
     sl_list_free(old, (*table)->pair_free);
@@ -227,7 +227,7 @@ struct hash_table_t *hash_table_resize(struct hash_table_t **table, size_t size)
 
   memset((*table)->array, 0, sizeof(struct chain_pointer_t) * size);
   (*table)->buckets_used = 0;
-  (*table)->collisions = 0;
+  (*table)->collisions   = 0;
 
   sl_list_iterate_over_nodes(old, resize_node_callback, (*table), old);
   sl_list_free(old, (*table)->pair_free);

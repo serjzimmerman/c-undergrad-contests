@@ -60,7 +60,7 @@ int handle_input(int argc, char **argv, struct cmd_args_t *args) {
 #define DEFAULT_BUF_SIZE 1024
 
 struct buf_t {
-  char *buf;
+  char  *buf;
   size_t size, pos;
 };
 
@@ -73,7 +73,7 @@ struct buf_t *buf_init(size_t size) {
   }
 
   buf->size = size;
-  buf->buf = calloc(buf->size, sizeof(char));
+  buf->buf  = calloc(buf->size, sizeof(char));
 
   if (!buf) {
     free(buf);
@@ -96,7 +96,7 @@ int buf_resize(struct buf_t *buf, size_t size) {
     return 1;
   }
 
-  buf->buf = temp;
+  buf->buf  = temp;
   buf->size = size;
 
   return 0;
@@ -118,7 +118,7 @@ int buf_append(struct buf_t *buf, const char c) {
 /* Close your eyes, goto madness ahead */
 int buf_readnstr(struct buf_t *buf, size_t n) {
   size_t i;
-  char c;
+  char   c;
 
   for (i = 0; i < n; i++) {
     while (isspace(c = getchar()))
@@ -166,7 +166,7 @@ char **get_array_of_tokens(char *buf, size_t n) {
   char *tok = strtok(buf, " ");
   while (tok) {
     array[i++] = tok;
-    tok = strtok(NULL, " ");
+    tok        = strtok(NULL, " ");
   }
 
   return array;
@@ -174,7 +174,7 @@ char **get_array_of_tokens(char *buf, size_t n) {
 
 struct hash_table_t *hash_pairs_from_array(char **array, size_t n) {
   struct hash_table_t *table;
-  dspair_t *pair;
+  dspair_t            *pair;
 
   table = hash_table_init(10 * n * (n - 1), dspair_hash, dspair_cmp, dspair_free);
 
@@ -208,7 +208,7 @@ void application_loop_read_stdin() {
   }
 
   struct buf_t *buf = buf_init(256);
-  res = buf_readnstr(buf, n);
+  res               = buf_readnstr(buf, n);
 
   if (res != n) {
     fprintf(stderr, (res == -1 ? "Internal error" : "Invalid input"));

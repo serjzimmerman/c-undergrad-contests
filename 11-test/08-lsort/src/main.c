@@ -3,7 +3,7 @@
 #include <stdlib.h>
 
 typedef struct Node {
-  void *data;
+  void        *data;
   struct Node *next;
 } * node;
 
@@ -13,7 +13,7 @@ typedef struct LinkedList {
 
 typedef struct Data {
   int *array;
-  int len;
+  int  len;
 } * data_t;
 
 node node_init() {
@@ -54,7 +54,7 @@ int _linkedlist_pre_append_push(linkedlist list, node *newnode, void *ptr) {
       return -1;
     }
     list->first = *newnode;
-    list->last = *newnode;
+    list->last  = *newnode;
     return 0;
   }
 
@@ -69,9 +69,9 @@ int linkedlist_append(linkedlist list, void *ptr) {
   }
 
   if (newnode != list->first) {
-    newnode->next = NULL;
+    newnode->next    = NULL;
     list->last->next = newnode;
-    list->last = newnode;
+    list->last       = newnode;
   }
 
   return 0;
@@ -129,17 +129,17 @@ node _node_get_middle(node head_ref) {
 node _merge_sorted_lists(node a, node b, int (*cmp_func)(void *a, void *b)) {
   node new_node, tail_node;
 
-  new_node = node_init();
+  new_node  = node_init();
   tail_node = new_node;
 
   while (a && b) {
     node next_node = NULL;
     if (cmp_func(a->data, b->data) > 0) {
       next_node = b;
-      b = b->next;
+      b         = b->next;
     } else {
       next_node = a;
-      a = a->next;
+      a         = a->next;
     }
     tail_node->next = next_node;
 
@@ -165,12 +165,12 @@ node _node_merge_sort(node head_ref, int (*cmp_func)(void *a, void *b)) {
     return head_ref;
   }
 
-  middle_node = _node_get_middle(head_ref);
-  left_node = head_ref;
-  right_node = middle_node->next;
+  middle_node       = _node_get_middle(head_ref);
+  left_node         = head_ref;
+  right_node        = middle_node->next;
   middle_node->next = NULL;
 
-  left_node = _node_merge_sort(left_node, cmp_func);
+  left_node  = _node_merge_sort(left_node, cmp_func);
   right_node = _node_merge_sort(right_node, cmp_func);
 
   return _merge_sorted_lists(left_node, right_node, cmp_func);
@@ -180,8 +180,7 @@ void linkedlist_merge_sort(linkedlist list, int (*cmp_func)(void *a, void *b)) {
   list->first = _node_merge_sort(list->first, cmp_func);
 }
 
-void linkedlist_iterate_over_nodes(linkedlist list,
-                                   void (*callback)(node node_to_iterate)) {
+void linkedlist_iterate_over_nodes(linkedlist list, void (*callback)(node node_to_iterate)) {
   node current_node;
 
   current_node = list->first;
@@ -196,7 +195,7 @@ data_t init_data(int *array, int len) {
   data_t r = malloc(sizeof(struct Data));
 
   r->array = array;
-  r->len = len;
+  r->len   = len;
 
   return r;
 }
@@ -208,7 +207,7 @@ void free_data_t(data_t data) {
 
 linkedlist list_from_array_of_data(data_t *data, int len) {
   linkedlist list;
-  int i;
+  int        i;
 
   list = linkedlist_init();
   for (i = 0; i < len; i++) {
@@ -288,13 +287,13 @@ void free_all_data(linkedlist list) {
 
 int main() {
   linkedlist list;
-  data_t *data_array;
-  int n, i;
+  data_t    *data_array;
+  int        n, i;
 
   scanf("%d", &n);
 
   data_array = read_data_array(n);
-  list = list_from_array_of_data(data_array, n);
+  list       = list_from_array_of_data(data_array, n);
 
   printf("\n\n");
 

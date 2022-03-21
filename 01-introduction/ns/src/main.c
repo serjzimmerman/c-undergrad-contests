@@ -41,7 +41,7 @@ char *itoa_base_n(char *dest, unsigned n, unsigned base) {
 }
 
 int main() {
-  int x, y, res;
+  int  x, y, res;
   char dest[128];
 
   res = scanf("%d%d", &x, &y);

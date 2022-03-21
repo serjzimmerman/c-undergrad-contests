@@ -6,7 +6,7 @@
 #include <string.h>
 
 struct sieve_t {
-  int n;
+  int   n;
   char *s;
 };
 
@@ -49,7 +49,7 @@ char *itoa_base_n(char *dest, int n, int base) {
 
 int shift_right_int(int n, int m) {
   char s[16] = "", d[8] = "";
-  int len;
+  int  len;
 
   assert(m < n);
 
@@ -155,7 +155,7 @@ void free_sieve(struct sieve_t *sv) {
 }
 
 int main() {
-  int x, res;
+  int             x, res;
   struct sieve_t *r;
 
   res = scanf("%d", &x);

@@ -1,15 +1,14 @@
 #include <assert.h>
-#include <stdlib.h>
 #include <stdio.h>
+#include <stdlib.h>
 
 typedef int (*cmp_t)(const void *lhs, const void *rhs);
 
-void *cbsearch(const void *key, const void *base, int num, int size,
-               cmp_t cmp) {
+void *cbsearch(const void *key, const void *base, int num, int size, cmp_t cmp) {
   char *low, *high, *mid;
-  int r;
+  int   r;
 
-  low = (char *)base;
+  low  = (char *)base;
   high = low + (num - 1) * size;
 
   while (high != low) {
@@ -39,11 +38,10 @@ int cmp_int(const void *x, const void *y) {
 
 int main() {
   int array[] = {2, 2, 3, 4, 5, 6, 7, 7};
-  int s = 2, *r;
+  int s       = 2, *r;
 
   cmp_t cmp_i = &cmp_int;
 
-  r = (int *)cbsearch(&s, &array, sizeof(array) / sizeof(int), sizeof(int),
-                      cmp_i);
+  r = (int *)cbsearch(&s, &array, sizeof(array) / sizeof(int), sizeof(int), cmp_i);
   printf("%d\n", *r);
 }

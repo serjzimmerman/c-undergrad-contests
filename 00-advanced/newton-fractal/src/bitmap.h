@@ -62,14 +62,14 @@ static inline color_rgb_t rgb_from_colors(unsigned char r, unsigned char g, unsi
 
 /* https://ru.wikipedia.org/wiki/HSV_(цветовая_модель) */
 static inline color_rgb_t hsv_to_rgb(color_hsv_t hsv) {
-  unsigned v_min, v_inc, v_dec, a;
+  unsigned    v_min, v_inc, v_dec, a;
   color_rgb_t rgb = {0};
 
   unsigned char hi = hsv.h / 60;
 
   /* Calculate rgb values in percents */
   v_min = (100 - hsv.s) * hsv.v / 100;
-  a = (hsv.v - v_min) * (hsv.h % 60) / 60;
+  a     = (hsv.v - v_min) * (hsv.h % 60) / 60;
   v_inc = v_min + a;
   v_dec = hsv.v - a;
 
@@ -111,12 +111,12 @@ struct bitmap_s;
 typedef struct bitmap_s bitmap_t;
 
 bitmap_t *bitmap_create(unsigned width, unsigned height);
-void bitmap_save(bitmap_t *image, const char *save_path);
-void bitmap_put_pixel(bitmap_t *image, unsigned x, unsigned y, color_rgb_t color);
-void bitmap_free(bitmap_t *image);
-unsigned bitmap_get_width(bitmap_t *image);
-unsigned bitmap_get_height(bitmap_t *image);
-void bitmap_fill(bitmap_t *image, color_rgb_t color);
+void      bitmap_save(bitmap_t *image, const char *save_path);
+void      bitmap_put_pixel(bitmap_t *image, unsigned x, unsigned y, color_rgb_t color);
+void      bitmap_free(bitmap_t *image);
+unsigned  bitmap_get_width(bitmap_t *image);
+unsigned  bitmap_get_height(bitmap_t *image);
+void      bitmap_fill(bitmap_t *image, color_rgb_t color);
 
 #ifdef __cplusplus
 }

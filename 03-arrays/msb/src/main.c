@@ -22,7 +22,7 @@ int msb(unsigned long long a) {
 }
 
 int main() {
-  int res;
+  int                res;
   unsigned long long x;
 
   res = scanf("%llu", &x);

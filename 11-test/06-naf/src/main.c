@@ -39,8 +39,8 @@ void print_naf(naf n) {
 }
 
 int main() {
-  int res;
-  naf r;
+  int                res;
+  naf                r;
   unsigned long long x;
 
   res = scanf("%llu", &x);

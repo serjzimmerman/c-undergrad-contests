@@ -19,7 +19,7 @@ int majority_element(const int *parr, int len) {
     return m1;
   }
 
-  i = j = 0;
+  i = j   = 0;
   counter = len;
   while (--counter >= 0) {
     if (parr[counter] == m1) {

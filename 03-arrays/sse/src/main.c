@@ -1,12 +1,12 @@
 #include <assert.h>
-#include <stdlib.h>
 #include <stdio.h>
+#include <stdlib.h>
 
 void swap_int(int *x, int *y) {
   int temp;
   temp = *x;
-  *x = *y;
-  *y = temp;
+  *x   = *y;
+  *y   = temp;
 }
 
 void selection_sort_iteration(int *const arr, const int len, const int last) {

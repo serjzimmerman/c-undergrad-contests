@@ -34,14 +34,14 @@ unsigned long long pow_mod(unsigned n, unsigned k, unsigned m) {
     if ((k % 2) == 1)
       prod = (prod * mult) % m;
     mult = (mult * mult) % m;
-    k = k / 2;
+    k    = k / 2;
   }
   return prod;
 }
 
 static char *read_word(int *len) {
   char *text;
-  int res, n, i;
+  int   res, n, i;
 
   res = scanf("%d", len);
   assert(res == 1);
@@ -69,8 +69,8 @@ int rabin_karp(const char *needle, const char *haystack) {
   unsigned n, target, cur, count = 0, left = 0, right, len = right = strlen(needle);
 
   target = get_hash(needle, needle + right);
-  cur = get_hash(haystack, haystack + right);
-  n = pow_mod(R, right - 1, Q);
+  cur    = get_hash(haystack, haystack + right);
+  n      = pow_mod(R, right - 1, Q);
 
   while (haystack[right] != 0) {
     if (target == cur && strncmp(&haystack[left], needle, len) == 0) {
@@ -83,11 +83,11 @@ int rabin_karp(const char *needle, const char *haystack) {
 }
 
 int main() {
-  int nlen, hlen, count = 0;
+  int   nlen, hlen, count = 0;
   char *needle, *haystack, *sres;
 
   haystack = read_word(&hlen);
-  needle = read_word(&nlen);
+  needle   = read_word(&nlen);
 
   sres = haystack;
   for (;;) {

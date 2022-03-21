@@ -11,14 +11,12 @@ float time_elev(int n, int m, int k, float ta, float tb) {
 }
 
 int main() {
-  int N = 0, M = 0, K = 0;
+  int   N = 0, M = 0, K = 0;
   float Ta = 0, Tb = 0, Tc = 0;
 
   scanf("%d %d %d %f %f %f", &N, &M, &K, &Ta, &Tb, &Tc);
 
-  printf("%s\n",
-         (time_stairs(N, M, Tc) < time_elev(N, M, K, Ta, Tb) ? "stairs\n"
-                                                             : "elevator\n"));
+  printf("%s\n", (time_stairs(N, M, Tc) < time_elev(N, M, K, Ta, Tb) ? "stairs\n" : "elevator\n"));
 
   return 0;
 }

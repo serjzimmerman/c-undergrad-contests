@@ -8,7 +8,7 @@ struct Window {
 };
 
 struct Facade {
-  int n, m, window_count;
+  int            n, m, window_count;
   struct Window *window_array;
 };
 
@@ -35,8 +35,8 @@ int window_inside(struct Window *w1, struct Facade *f1) {
 }
 
 int main() {
-  int temp_count = 0, correct = 1, i, j;
-  struct Facade facade = {0};
+  int            temp_count = 0, correct = 1, i, j;
+  struct Facade  facade = {0};
   struct Window *array;
 
   scanf("%d %d", &facade.n, &facade.m);
@@ -45,8 +45,7 @@ int main() {
   array = (struct Window *)calloc(sizeof(struct Window) * temp_count, 1);
 
   for (i = 0; i < temp_count; i++) {
-    scanf("%d %d %d %d", &array[i].min_x, &array[i].max_x, &array[i].min_y,
-          &array[i].max_y);
+    scanf("%d %d %d %d", &array[i].min_x, &array[i].max_x, &array[i].min_y, &array[i].max_y);
   }
 
   facade.window_array = array;

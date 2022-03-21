@@ -5,7 +5,7 @@
 
 struct node_t {
   struct node_t *next;
-  char *name;
+  char          *name;
 };
 
 void node_free(struct node_t *node) {
@@ -16,7 +16,7 @@ void node_free(struct node_t *node) {
 struct node_t *node_init(char *name) {
   struct node_t *node;
 
-  node = calloc(1, sizeof(struct node_t));
+  node       = calloc(1, sizeof(struct node_t));
   node->name = name;
 
   return node;
@@ -24,8 +24,8 @@ struct node_t *node_init(char *name) {
 
 struct node_t *path_create(char *path) {
   struct node_t *node;
-  char *next_slash, *name, *current;
-  int len;
+  char          *next_slash, *name, *current;
+  int            len;
 
   next_slash = strchr(path, '/');
 
@@ -85,7 +85,7 @@ struct node_t *path_normalize(struct node_t *node) {
 
 void print_path_to_str(struct node_t *head, char *str) {
   struct node_t *node;
-  int len;
+  int            len;
 
   node = head;
 

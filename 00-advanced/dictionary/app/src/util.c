@@ -19,9 +19,9 @@ char *stolower(char *src) {
 
 void print_callback(struct sl_node_t *node, struct sl_list_t *list, va_list argp) {
   struct spair_t *pair;
-  FILE *fs;
+  FILE           *fs;
 
-  fs = va_arg(argp, FILE *);
+  fs   = va_arg(argp, FILE *);
   pair = sl_node_get_data(node);
 
   fprintf(fs, "%s -- %u\n", spair_get_key(pair), spair_get_value(pair));

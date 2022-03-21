@@ -8,10 +8,10 @@ struct area {
 };
 
 int compare(const void *a, const void *b) {
-  struct area *first, *second;
+  struct area       *first, *second;
   long long unsigned a1, a2, p1, p2;
 
-  first = (struct area *)a;
+  first  = (struct area *)a;
   second = (struct area *)b;
 
   a1 = first->width * first->height;
@@ -36,7 +36,7 @@ int compare(const void *a, const void *b) {
 
 int main() {
   struct area *array;
-  int n, i;
+  int          n, i;
 
   scanf("%d", &n);
 

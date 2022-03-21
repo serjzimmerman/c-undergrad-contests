@@ -19,7 +19,7 @@ void schedule_sort_by_fin(struct intvl_t *reqs, int nreqs) {
 
 int schedulemax(struct intvl_t *reqs, int nreqs) {
   struct intvl_t prev;
-  int n = 1, i;
+  int            n = 1, i;
 
   if (nreqs == 0) {
     return 0;

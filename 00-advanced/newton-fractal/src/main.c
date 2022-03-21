@@ -58,7 +58,7 @@ int main() {
   }
 
   GLuint vertex_shader = shader_manager_get(manager, "vertex.vs", GL_VERTEX_SHADER);
-  GLuint frag_shader = shader_manager_get(manager, "frag.fs", GL_FRAGMENT_SHADER);
+  GLuint frag_shader   = shader_manager_get(manager, "frag.fs", GL_FRAGMENT_SHADER);
 
   if (vertex_shader == 0) {
     logger("Error compiling vertex shader\n");

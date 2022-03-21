@@ -136,10 +136,10 @@ struct matn_t *toom_cook_interpolation_matrix(size_t k) {
 }
 
 struct poly_t *poly_mult_toom_cook(struct poly_t *a, struct poly_t *b, size_t k) {
-  struct poly_t splita[k], splitb[k];
-  struct poly_t *arraya[2 * k - 1], *arrayb[2 * k - 1], *arrayc[2 * k - 1];
+  struct poly_t   splita[k], splitb[k];
+  struct poly_t  *arraya[2 * k - 1], *arrayb[2 * k - 1], *arrayc[2 * k - 1];
   struct poly_t **cc;
-  struct matn_t *mat;
+  struct matn_t  *mat;
 
   if (a->n == 1 || b->n == 1) {
     return

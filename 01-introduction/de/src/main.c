@@ -18,8 +18,8 @@ void swap(int *x, int *y) {
   int temp;
 
   temp = *x;
-  *x = *y;
-  *y = temp;
+  *x   = *y;
+  *y   = temp;
 }
 
 int iabs(const int x) {
@@ -53,9 +53,9 @@ int extended_gcd(struct ExtendedGcd *egcd, const int x, const int y) {
   old_r = x;
   old_s = 1;
   old_t = 0;
-  r = y;
-  s = 0;
-  t = 1;
+  r     = y;
+  s     = 0;
+  t     = 1;
 
   assert(y != 0);
 
@@ -76,9 +76,8 @@ int extended_gcd(struct ExtendedGcd *egcd, const int x, const int y) {
   return 0;
 }
 
-int solve_diophantine(struct DiophantineSolution *dsol, const int x,
-                      const int y, const int c) {
-  int k;
+int solve_diophantine(struct DiophantineSolution *dsol, const int x, const int y, const int c) {
+  int                k;
   struct ExtendedGcd egcd;
 
   extended_gcd(&egcd, x, y);
@@ -92,13 +91,13 @@ int solve_diophantine(struct DiophantineSolution *dsol, const int x,
 
   dsol->sol_array[0] = k * egcd.a;
   dsol->sol_array[1] = k * egcd.b;
-  dsol->sol_count = 2;
+  dsol->sol_count    = 2;
 
   return 0;
 }
 
 int main() {
-  int x, y, c, res;
+  int                        x, y, c, res;
   struct DiophantineSolution dsol;
 
   res = scanf("%d%d%d", &x, &y, &c);

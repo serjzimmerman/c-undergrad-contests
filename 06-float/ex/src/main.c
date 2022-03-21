@@ -4,7 +4,7 @@
 #include <string.h>
 
 int main() {
-  float f;
+  float    f;
   unsigned x;
 
   scanf("%f", &f);

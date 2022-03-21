@@ -6,8 +6,8 @@ void swap(unsigned *x, unsigned *y) {
   unsigned temp;
 
   temp = *x;
-  *x = *y;
-  *y = temp;
+  *x   = *y;
+  *y   = temp;
 }
 
 unsigned fib_modulo(unsigned x, unsigned n) {
@@ -18,13 +18,13 @@ unsigned fib_modulo(unsigned x, unsigned n) {
   }
 
   r_old_old = 0;
-  r_old = 1;
-  r = 1;
-  i = 1;
+  r_old     = 1;
+  r         = 1;
+  i         = 1;
 
   while (i++ < x) {
     temp = r;
-    r = (r_old_old + r_old) % n;
+    r    = (r_old_old + r_old) % n;
     swap(&temp, &r_old);
     r_old_old = r;
   }

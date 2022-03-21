@@ -7,8 +7,8 @@
 void swap(unsigned *x, unsigned *y) {
   unsigned temp;
   temp = *x;
-  *x = *y;
-  *y = temp;
+  *x   = *y;
+  *y   = temp;
 }
 
 unsigned *fib_memo(unsigned *array, const unsigned size) {
@@ -54,7 +54,7 @@ char *fib_factor(char *factored, unsigned x) {
 
 int main() {
   unsigned x, res;
-  char temp[MEMO_SIZE];
+  char     temp[MEMO_SIZE];
 
   res = scanf("%u", &x);
 

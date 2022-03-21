@@ -11,7 +11,7 @@ int gen_test(int x) {
 }
 
 unsigned cycle_len(generator_t gen) {
-  int slow = 0, fast = 0;
+  int      slow = 0, fast = 0;
   unsigned result = 0;
 
   slow = fast = gen(slow);
@@ -33,7 +33,7 @@ unsigned cycle_len(generator_t gen) {
   }
 
   for (;;) {
-    slow = gen(slow);
+    slow   = gen(slow);
     result = result + 1;
 
     if (slow == fast) {

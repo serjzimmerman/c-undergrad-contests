@@ -6,7 +6,7 @@
 
 struct _Decimal {
   /* a[0]*10^0 + a[1]*10^1 + ..+ a[n]*10^n */
-  char a[N];
+  char         a[N];
   unsigned int n;
 };
 typedef struct _Decimal Decimal;
