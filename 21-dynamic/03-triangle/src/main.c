@@ -42,16 +42,12 @@ int triangle_max(int *tri, int *buf, int n) {
   for (i = 1; i < n; i++) {
     for (j = 0; j <= i; j++) {
       if (j == 0) {
-        triangle_set(buf, i, j,
-                     triange_get(tri, i, j) + triange_get(buf, i - 1, j));
+        triangle_set(buf, i, j, triange_get(tri, i, j) + triange_get(buf, i - 1, j));
       } else if (j == i) {
-        triangle_set(buf, i, j,
-                     triange_get(tri, i, j) + triange_get(buf, i - 1, j - 1));
+        triangle_set(buf, i, j, triange_get(tri, i, j) + triange_get(buf, i - 1, j - 1));
       } else {
         triangle_set(buf, i, j,
-                     triange_get(tri, i, j) +
-                         max(triange_get(buf, i - 1, j - 1),
-                             triange_get(buf, i - 1, j)));
+                     triange_get(tri, i, j) + max(triange_get(buf, i - 1, j - 1), triange_get(buf, i - 1, j)));
       }
     }
   }

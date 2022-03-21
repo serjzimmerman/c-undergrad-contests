@@ -6,7 +6,7 @@
 #include "polynomial.h"
 
 int main() {
-  int i, n, m, *array1, *array2;
+  int           i, n, m, *array1, *array2;
   polynomial_t *p1, *p2, *p3;
 
   scanf("%d %d", &n, &m);
@@ -34,6 +34,6 @@ int main() {
   polynomial_free(p1);
   polynomial_free(p2);
   polynomial_free(p3);
-  
+
   return 0;
 }

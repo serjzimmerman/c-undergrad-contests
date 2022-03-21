@@ -13,7 +13,7 @@ dspair_t dspair_init(char *first, char *second) {
     return NULL;
   }
 
-  pair->first = first;
+  pair->first  = first;
   pair->second = second;
 
   return (void *)pair;
@@ -21,7 +21,7 @@ dspair_t dspair_init(char *first, char *second) {
 
 unsigned long hash_djb2_double(const char *first, const char *second) {
   unsigned long hash = 5381;
-  int c;
+  int           c;
 
   assert(first);
   assert(second);
@@ -48,8 +48,8 @@ char *dspair_advance_pointer(struct dspair_s *pair, int *n, char *ptr) {
 
 int dspair_cmp(dspair_t first, dspair_t second) {
   struct dspair_s *ds1, *ds2;
-  char *ptr1, *ptr2;
-  int n1 = 0, n2 = 0;
+  char            *ptr1, *ptr2;
+  int              n1 = 0, n2 = 0;
 
   ds1 = (struct dspair_s *)first;
   ds2 = (struct dspair_s *)second;

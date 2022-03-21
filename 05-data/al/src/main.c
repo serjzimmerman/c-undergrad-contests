@@ -5,34 +5,33 @@
 
 struct node_t {
   struct node_t *next;
-  int data;
+  int            data;
 };
 
 struct node_t *init_node(int val) {
   struct node_t *node;
 
-  node = calloc(1, sizeof(struct node_t));
+  node       = calloc(1, sizeof(struct node_t));
   node->data = val;
 
   return node;
 }
 
 struct node_t *read_list(FILE *inp) {
-  struct node_t *temp_node, dummy_even = {0}, dummy_odd = {0}, *current_even,
-                            *current_odd;
-  int result, temp;
+  struct node_t *temp_node, dummy_even = {0}, dummy_odd = {0}, *current_even, *current_odd;
+  int            result, temp;
 
   current_even = &dummy_even;
-  current_odd = &dummy_odd;
+  current_odd  = &dummy_odd;
 
   while ((result = fscanf(inp, "%d", &temp)) != EOF && result == 1) {
     temp_node = init_node(temp);
     if (temp & 1) {
       current_odd->next = temp_node;
-      current_odd = temp_node;
+      current_odd       = temp_node;
     } else {
       current_even->next = temp_node;
-      current_even = temp_node;
+      current_even       = temp_node;
     }
   }
 
@@ -51,7 +50,7 @@ void delete_list(struct node_t *top) {
   }
 
   current = top;
-  next = top->next;
+  next    = top->next;
 
   while (current) {
     free(current);
@@ -75,9 +74,9 @@ void print_list(struct node_t *top) {
 
 int main() {
   struct node_t *list;
-  FILE *fp;
+  FILE          *fp;
 
-  fp = fopen("test.txt", "r");
+  fp   = fopen("test.txt", "r");
   list = read_list(fp);
 
   print_list(list);

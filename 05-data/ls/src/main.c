@@ -6,7 +6,7 @@
 
 struct tree_t {
   struct tree_t *left, *right;
-  int data;
+  int            data;
 };
 
 /* TODO: write supporting code */

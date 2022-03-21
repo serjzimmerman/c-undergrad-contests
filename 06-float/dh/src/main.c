@@ -15,14 +15,14 @@ float compute_function(float a, float b, float c, float x) {
 float solve_equation(float a, float b, float c, float n) {
   float left, right, mid, lval, rval, mval;
 
-  left = -n;
+  left  = -n;
   right = n;
 
   lval = compute_function(a, b, c, left);
   rval = compute_function(a, b, c, right);
 
   while (signbit(lval * rval)) {
-    mid = (left + right) / 2;
+    mid  = (left + right) / 2;
     mval = compute_function(a, b, c, mid);
 
     if (fabsf(mval) < EPS) {
@@ -41,7 +41,7 @@ float solve_equation(float a, float b, float c, float n) {
 
 int main() {
   float a, b, c, n, x;
-  int res;
+  int   res;
 
   res = scanf("%f %f %f %f", &a, &b, &c, &n);
 

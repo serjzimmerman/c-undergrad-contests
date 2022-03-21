@@ -11,7 +11,7 @@
 #define min(x, y) (x > y ? y : x)
 
 struct sieve_t {
-  int n;
+  int      n;
   uint8_t *s;
 };
 
@@ -53,8 +53,8 @@ struct sieve_t *init_sieve(int n) {
 void swap_uint64(uint64_t *a, uint64_t *b) {
   uint64_t temp;
   temp = *a;
-  *a = *b;
-  *b = temp;
+  *a   = *b;
+  *b   = temp;
 }
 
 /* This code is shit, there is a builtin gcc function __inbuilt_ctz() */
@@ -208,7 +208,7 @@ uint8_t fermat_primality_test(uint64_t p, uint32_t i) {
 
 uint64_t max_pf(uint8_t k, uint8_t n) {
   struct sieve_t *r;
-  uint64_t max = 0, s = 1, s_prev = 1, s_prev_prev = 0, temp;
+  uint64_t        max = 0, s = 1, s_prev = 1, s_prev_prev = 0, temp;
 
   s = k * s_prev + n * s_prev_prev;
 
@@ -230,17 +230,17 @@ uint64_t max_pf(uint8_t k, uint8_t n) {
     } else if (fermat_primality_test(s, 200)) {
       max = s;
     }
-    temp = s;
-    s = k * s + n * s_prev;
+    temp        = s;
+    s           = k * s + n * s_prev;
     s_prev_prev = s_prev;
-    s_prev = temp;
+    s_prev      = temp;
   }
 
   return max;
 }
 
 int main() {
-  int res;
+  int     res;
   uint8_t k, n;
 
   res = scanf("%hhu%hhu", &k, &n);

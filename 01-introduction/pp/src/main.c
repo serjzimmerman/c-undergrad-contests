@@ -10,21 +10,21 @@ void swap(unsigned long *x, unsigned long *y) {
   unsigned long temp;
 
   temp = *x;
-  *x = *y;
-  *y = temp;
+  *x   = *y;
+  *y   = temp;
 }
 
 unsigned long get_pp(unsigned long n) {
   unsigned long i, r, r_old, r_old_old, temp;
 
   r_old_old = 0;
-  r_old = 1;
-  r = 1;
-  i = 1;
+  r_old     = 1;
+  r         = 1;
+  i         = 1;
 
   for (;; i++) {
     temp = r;
-    r = (r_old_old + r_old) % n;
+    r    = (r_old_old + r_old) % n;
     swap(&temp, &r_old);
     r_old_old = r;
 
@@ -47,13 +47,13 @@ void fib_modulo(struct Solution_Pp *sol, unsigned long x, unsigned long n) {
   }
 
   r_old_old = 0;
-  r_old = 1;
-  r = 1;
-  i = 1;
+  r_old     = 1;
+  r         = 1;
+  i         = 1;
 
   while (i++ < x) {
     temp = r;
-    r = (r_old_old + r_old) % n;
+    r    = (r_old_old + r_old) % n;
     swap(&temp, &r_old);
     r_old_old = r;
   }
@@ -62,7 +62,7 @@ void fib_modulo(struct Solution_Pp *sol, unsigned long x, unsigned long n) {
 }
 
 int main() {
-  unsigned long x, y, res;
+  unsigned long      x, y, res;
   struct Solution_Pp sol;
 
   res = scanf("%lu%lu", &x, &y);

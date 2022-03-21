@@ -17,7 +17,7 @@ int substrcnt(char *str, const char *substr) {
 
 char **substrnptr(char *str, const char *substr, const int cnt) {
   char **result;
-  int i = 0, sublen;
+  int    i = 0, sublen;
 
   sublen = strlen(substr);
   result = calloc(cnt, sizeof(char *));
@@ -32,14 +32,13 @@ char **substrnptr(char *str, const char *substr, const int cnt) {
 
 char *replace(char *str, char const *from, char const *to) {
   char *result, **subptr;
-  int nsub, fromlen, tolen, i = 0, j = 0;
+  int   nsub, fromlen, tolen, i = 0, j = 0;
 
-  tolen = strlen(to);
+  tolen   = strlen(to);
   fromlen = strlen(from);
-  nsub = substrcnt(str, from);
+  nsub    = substrcnt(str, from);
 
-  if ((result = calloc(1 + strlen(str) + nsub * (tolen - fromlen),
-                       sizeof(char))) == NULL) {
+  if ((result = calloc(1 + strlen(str) + nsub * (tolen - fromlen), sizeof(char))) == NULL) {
     return NULL;
   }
 
@@ -64,8 +63,7 @@ char *replace(char *str, char const *from, char const *to) {
 }
 
 int main() {
-  char str[] = "Hello, %username, how are you, %username", from[] = "%username",
-       to[] = "Eric, the Blood Axe";
+  char  str[] = "Hello, %username, how are you, %username", from[] = "%username", to[] = "Eric, the Blood Axe";
   char *result;
 
   printf("%s\n", (result = replace(str, from, to)));

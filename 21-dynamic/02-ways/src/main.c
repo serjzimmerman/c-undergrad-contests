@@ -37,7 +37,7 @@ void print_buf(unsigned long long *buf, int n, int m) {
 
 int main() {
   unsigned long long *buf;
-  int n, m;
+  int                 n, m;
 
   scanf("%d %d", &n, &m);
   buf = (unsigned long long *)calloc((++n) * (++m), sizeof(unsigned long long));

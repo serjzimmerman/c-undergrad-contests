@@ -15,7 +15,7 @@ int get_string_sum(char *string) {
 }
 
 int main() {
-  int sum = 0;
+  int  sum = 0;
   char c;
 
   while ((c = getc(stdin)) != EOF) {

@@ -6,10 +6,10 @@ typedef int (*cmp_t)(const void *lhs, const void *rhs);
 
 void swap(void *x, void *y, int eltsize) {
   char temp;
-  int i;
+  int  i;
 
   for (i = 0; i < eltsize; i++) {
-    temp = ((char *)y)[i];
+    temp           = ((char *)y)[i];
     ((char *)y)[i] = ((char *)x)[i];
     ((char *)x)[i] = temp;
   }

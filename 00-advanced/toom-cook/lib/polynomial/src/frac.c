@@ -42,7 +42,7 @@ struct frac_t frac_normalize(struct frac_t a) {
   if (a.numerator == 0) {
     a.denominator = 1;
   } else {
-    a.numerator = a.numerator / g;
+    a.numerator   = a.numerator / g;
     a.denominator = a.denominator / g;
   }
 
@@ -55,9 +55,9 @@ struct frac_t frac_add(struct frac_t a, struct frac_t b) {
   assert(a.denominator);
   assert(b.denominator);
 
-  int g = gcd(a.denominator, b.denominator);
+  int g         = gcd(a.denominator, b.denominator);
   r.denominator = a.denominator * b.denominator;
-  r.numerator = a.numerator * b.denominator + b.numerator * a.denominator;
+  r.numerator   = a.numerator * b.denominator + b.numerator * a.denominator;
 
   return frac_normalize(r);
 }
@@ -69,19 +69,19 @@ struct frac_t frac_mult_frac(struct frac_t a, struct frac_t b) {
   assert(b.denominator);
 
   if (a.numerator == 0 || b.numerator == 0) {
-    r.numerator = 0;
+    r.numerator   = 0;
     r.denominator = 1;
     return r;
   }
 
-  r.numerator = a.numerator * b.numerator;
+  r.numerator   = a.numerator * b.numerator;
   r.denominator = a.denominator * b.denominator;
-  int g = gcd(iabs(r.numerator), r.denominator);
+  int g         = gcd(iabs(r.numerator), r.denominator);
 
   if (r.numerator == 0) {
     r.denominator = 1;
   } else {
-    r.numerator = r.numerator / g;
+    r.numerator   = r.numerator / g;
     r.denominator = r.denominator / g;
   }
 
@@ -104,7 +104,7 @@ struct frac_t frac_mult_num(struct frac_t a, int n) {
 
   assert(a.denominator);
 
-  t.numerator = n;
+  t.numerator   = n;
   t.denominator = 1;
 
   return frac_mult_frac(a, t);
@@ -115,7 +115,7 @@ struct frac_t frac_inverse(struct frac_t a) {
 
   assert(a.denominator);
 
-  r.numerator = a.denominator * isign(a.numerator);
+  r.numerator   = a.denominator * isign(a.numerator);
   r.denominator = iabs(a.numerator);
 
   return r;
@@ -133,7 +133,7 @@ struct frac_t frac_from_num(int n) {
   struct frac_t r;
 
   r.denominator = 1;
-  r.numerator = n;
+  r.numerator   = n;
 
   return r;
 }
@@ -149,7 +149,7 @@ struct frac_t frac_init(int numerator, int denominator) {
 
   assert(denominator);
 
-  r.numerator = numerator;
+  r.numerator   = numerator;
   r.denominator = denominator;
 
   return r;

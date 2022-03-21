@@ -4,7 +4,7 @@
 #include <stdlib.h>
 
 struct sieve_t {
-  int n;
+  int   n;
   char *s;
 };
 

@@ -11,9 +11,9 @@
 #include <unistd.h>
 
 struct bitmap_s {
-  unsigned width, height;
-  color_rgb_t color;
-  point_t point;
+  unsigned     width, height;
+  color_rgb_t  color;
+  point_t      point;
   color_rgb_t *array;
 };
 
@@ -25,7 +25,7 @@ bitmap_t *bitmap_create(unsigned width, unsigned height) {
     exit(EXIT_FAILURE);
   }
 
-  bitmap->width = width;
+  bitmap->width  = width;
   bitmap->height = height;
 
   bitmap->array = calloc(width * height, sizeof(color_rgb_t));
@@ -46,9 +46,9 @@ struct bitmap_header_s {
     struct {
       /* First part of the bmp header */
       unsigned char bitmap_name[2]; /* Always equal to "BM" in ASCII = 0x4D42 */
-      uint32_t file_size;           /* Total file size in bytes */
+      uint32_t      file_size;      /* Total file size in bytes */
       unsigned char reserved[4];    /* Must be equal to 0 */
-      uint32_t header_size;         /* Total header size = 54 */
+      uint32_t      header_size;    /* Total header size = 54 */
       /* Second part of the bmp header */
       uint32_t second_size; /* Size of the second header part = 40 */
       uint32_t width;
@@ -74,12 +74,12 @@ struct bitmap_header_s header_create(bitmap_t *image) {
   header.header_size = BMP_HEADER_SIZE;
   header.second_size = 40;
 
-  header.height = image->height;
-  header.width = image->width;
+  header.height    = image->height;
+  header.width     = image->width;
   header.file_size = BMP_HEADER_SIZE + header.height * header.width * BYTES_PER_PIXEL;
 
   header.bits_per_pixel = CHAR_BIT * BYTES_PER_PIXEL;
-  header.color_planes = 1;
+  header.color_planes   = 1;
 
   return header;
 }

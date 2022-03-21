@@ -5,7 +5,7 @@
 #include <stdlib.h>
 
 struct sieve_t {
-  int n;
+  int   n;
   char *s;
 };
 
@@ -70,15 +70,12 @@ void free_sieve(struct sieve_t *sv) {
 
 struct sequence_t get_largest_sequence(struct sieve_t *sv, int n) {
   struct sequence_t current_sequence = {0}, max_sequence = {0};
-  int temp;
+  int               temp;
 
-  for (current_sequence.a = -n + 1; current_sequence.a < n;
-       current_sequence.a++) {
-    for (current_sequence.b = -n + 1; current_sequence.b < n;
-         current_sequence.b++) {
+  for (current_sequence.a = -n + 1; current_sequence.a < n; current_sequence.a++) {
+    for (current_sequence.b = -n + 1; current_sequence.b < n; current_sequence.b++) {
       current_sequence.n = 0;
-      while ((temp = current_sequence.n * current_sequence.n +
-                     current_sequence.a * current_sequence.n +
+      while ((temp = current_sequence.n * current_sequence.n + current_sequence.a * current_sequence.n +
                      current_sequence.b) > 0 &&
              is_prime(sv, temp)) {
         current_sequence.n++;
@@ -95,8 +92,8 @@ struct sequence_t get_largest_sequence(struct sieve_t *sv, int n) {
 }
 
 int main() {
-  int x, res;
-  struct sieve_t *r;
+  int               x, res;
+  struct sieve_t   *r;
   struct sequence_t max;
 
   res = scanf("%d", &x);

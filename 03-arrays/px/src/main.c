@@ -15,7 +15,7 @@ typedef struct {
 
 mNxN mn_identity() {
   unsigned i, j;
-  mNxN r;
+  mNxN     r;
 
   for (i = 0; i < MATRIX_MN_SIZE; i++) {
     for (j = 0; j < MATRIX_MN_SIZE; j++) {
@@ -28,7 +28,7 @@ mNxN mn_identity() {
 
 mNxN mn_mult_mod(const mNxN x, const mNxN y, const unsigned m) {
   unsigned i, j, k, t;
-  mNxN r;
+  mNxN     r;
 
   for (i = 0; i < MATRIX_MN_SIZE; i++) {
     for (j = 0; j < MATRIX_MN_SIZE; j++) {
@@ -67,7 +67,7 @@ mNxN mn_pow_mod(mNxN x, unsigned n, unsigned m) {
 
 void powNxN(unsigned (*A)[N], unsigned k, unsigned m) {
   mNxN a, r;
-  int i, j;
+  int  i, j;
 
   for (i = 0; i < MATRIX_MN_SIZE; i++) {
     for (j = 0; j < MATRIX_MN_SIZE; j++) {
@@ -85,12 +85,12 @@ void powNxN(unsigned (*A)[N], unsigned k, unsigned m) {
 }
 
 int main() {
-  int res;
+  int      res;
   unsigned i, n, m;
-  mNxN a, b;
+  mNxN     a, b;
 
-  res = scanf("%u%u%u%u%u%u", &a.mn_array.mn_2d[0][0], &a.mn_array.mn_2d[0][1],
-              &a.mn_array.mn_2d[1][0], &a.mn_array.mn_2d[1][1], &n, &m);
+  res = scanf("%u%u%u%u%u%u", &a.mn_array.mn_2d[0][0], &a.mn_array.mn_2d[0][1], &a.mn_array.mn_2d[1][0],
+              &a.mn_array.mn_2d[1][1], &n, &m);
 
   if (res != 6) {
     printf("%s\n", "Wrong input");
@@ -100,8 +100,7 @@ int main() {
   b = mn_pow_mod(a, n, m);
 
   for (i = 0; i < MATRIX_MN_SIZE * MATRIX_MN_SIZE; i++) {
-    printf(((i != MATRIX_MN_SIZE * MATRIX_MN_SIZE - 1) ? "%u " : "%u\n"),
-           b.mn_array.mn_1d[i]);
+    printf(((i != MATRIX_MN_SIZE * MATRIX_MN_SIZE - 1) ? "%u " : "%u\n"), b.mn_array.mn_1d[i]);
   }
 
   return 0;

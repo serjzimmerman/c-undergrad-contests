@@ -13,7 +13,7 @@ typedef struct {
 
 m2 m2_identity() {
   unsigned i, j;
-  m2 r;
+  m2       r;
 
   for (i = 0; i < MATRIX_M2_SIZE; i++) {
     for (j = 0; j < MATRIX_M2_SIZE; j++) {
@@ -26,7 +26,7 @@ m2 m2_identity() {
 
 m2 m2_mult_mod(const m2 x, const m2 y, const unsigned m) {
   unsigned i, j, k, t;
-  m2 r;
+  m2       r;
 
   for (i = 0; i < MATRIX_M2_SIZE; i++) {
     for (j = 0; j < MATRIX_M2_SIZE; j++) {
@@ -64,12 +64,12 @@ m2 m2_pow_mod(m2 x, unsigned n, unsigned m) {
 }
 
 int main() {
-  int res;
+  int      res;
   unsigned i, n, m;
-  m2 a, b;
+  m2       a, b;
 
-  res = scanf("%u%u%u%u%u%u", &a.m2_array.m2_2d[0][0], &a.m2_array.m2_2d[0][1],
-              &a.m2_array.m2_2d[1][0], &a.m2_array.m2_2d[1][1], &n, &m);
+  res = scanf("%u%u%u%u%u%u", &a.m2_array.m2_2d[0][0], &a.m2_array.m2_2d[0][1], &a.m2_array.m2_2d[1][0],
+              &a.m2_array.m2_2d[1][1], &n, &m);
 
   if (res != 6) {
     printf("%s\n", "Wrong input");
@@ -79,8 +79,7 @@ int main() {
   b = m2_pow_mod(a, n, m);
 
   for (i = 0; i < MATRIX_M2_SIZE * MATRIX_M2_SIZE; i++) {
-    printf(((i != MATRIX_M2_SIZE * MATRIX_M2_SIZE - 1) ? "%u " : "%u\n"),
-           b.m2_array.m2_1d[i]);
+    printf(((i != MATRIX_M2_SIZE * MATRIX_M2_SIZE - 1) ? "%u " : "%u\n"), b.m2_array.m2_1d[i]);
   }
 
   return 0;

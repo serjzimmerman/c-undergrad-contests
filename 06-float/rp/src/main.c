@@ -20,7 +20,7 @@ struct edges_t {
 
 struct edges_t get_edges(int n, int d) {
   struct edges_t result = {0};
-  float fn, fd;
+  float          fn, fd;
 
   fn = (float)n;
   fd = (float)d;
@@ -39,7 +39,7 @@ struct expman_t {
 
 struct expman_t bin_from_float(float x) {
   struct expman_t result;
-  unsigned temp;
+  unsigned        temp;
 
   temp = float_as_uint(x);
 
@@ -50,8 +50,8 @@ struct expman_t bin_from_float(float x) {
 }
 
 int main() {
-  int x, y, res;
-  struct edges_t result;
+  int             x, y, res;
+  struct edges_t  result;
   struct expman_t first, second;
 
   res = scanf("%d %d", &x, &y);
@@ -62,7 +62,7 @@ int main() {
 
   result = get_edges(x, y);
 
-  first = bin_from_float(result.bottom);
+  first  = bin_from_float(result.bottom);
   second = bin_from_float(result.top);
 
   if (first.exp == second.exp && first.man == second.man) {

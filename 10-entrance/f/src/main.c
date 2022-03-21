@@ -25,14 +25,14 @@ long int digit_num(long int n) {
 
 long int digit_sum(long int n) {
   long int digits = digit_num(n);
-  int i;
+  int      i;
 
   if (digits > 1) {
     long int temp = 0;
 
     for (i = 1; i < digits + 1; i++) {
       temp = temp + n % 10;
-      n = n / 10;
+      n    = n / 10;
     }
 
     return digit_sum(temp);

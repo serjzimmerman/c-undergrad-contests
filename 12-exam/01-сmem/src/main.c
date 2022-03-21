@@ -28,7 +28,7 @@ struct Rect *transform(const struct Rect *src) {
 }
 
 int main() {
-  struct Rect a = {{-1, 1}, {4, -2}};
+  struct Rect  a = {{-1, 1}, {4, -2}};
   struct Rect *rect;
 
   rect = transform(&a);

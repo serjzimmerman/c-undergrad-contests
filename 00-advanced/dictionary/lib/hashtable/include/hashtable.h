@@ -12,10 +12,10 @@ struct hash_table_t;
 
 struct hash_table_t *hash_table_init(size_t size, unsigned long (*hash)(const void *), int (*pair_cmp)(void *, void *),
                                      void (*pair_free)(void *));
-void hash_table_free(struct hash_table_t *table);
+void                 hash_table_free(struct hash_table_t *table);
 
-int hash_table_insert(struct hash_table_t **table, void *pair);
-void *hash_table_lookup(struct hash_table_t *table, void *key);
+int                  hash_table_insert(struct hash_table_t **table, void *pair);
+void                *hash_table_lookup(struct hash_table_t *table, void *key);
 struct hash_table_t *hash_table_resize(struct hash_table_t **table, size_t size);
 
 size_t hash_table_get_size(struct hash_table_t *table);

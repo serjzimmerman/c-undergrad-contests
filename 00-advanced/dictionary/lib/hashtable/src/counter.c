@@ -35,7 +35,7 @@ void counter_free(struct counter_t *counter, int free_table) {
 
 void counter_item_add(struct counter_t *counter, char *key) {
   struct spair_s find;
-  spair_t pair;
+  spair_t        pair;
   find.key = key;
 
   pair = hash_table_lookup(counter->table, &find);
@@ -50,7 +50,7 @@ void counter_item_add(struct counter_t *counter, char *key) {
 
 unsigned counter_item_get_count(struct counter_t *counter, char *key) {
   struct spair_s find;
-  spair_t pair;
+  spair_t        pair;
   find.key = key;
 
   pair = hash_table_lookup(counter->table, &find);

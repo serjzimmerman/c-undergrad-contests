@@ -5,7 +5,7 @@
 
 typedef struct {
   int *coefficients;
-  int len;
+  int  len;
 } polynomial_t;
 
 struct int_stack_s {
@@ -51,7 +51,7 @@ polynomial_t *polynomial_init_malloc(const int len) {
   return new;
 }
 
-polynomial_t *polynomial_expand(polynomial_t * const poly, const int new_len) {
+polynomial_t *polynomial_expand(polynomial_t *const poly, const int new_len) {
   if (poly->len == new_len) {
     return poly;
   }
@@ -72,7 +72,7 @@ void polynomial_free(polynomial_t *poly) {
   free(poly);
 }
 
-void polynomial_split_half(const polynomial_t * const a, polynomial_t * const a0, polynomial_t * const a1) {
+void polynomial_split_half(const polynomial_t *const a, polynomial_t *const a0, polynomial_t *const a1) {
   a0->coefficients = &a->coefficients[0];
   a1->coefficients = &a->coefficients[a->len >> 1];
 
@@ -80,9 +80,8 @@ void polynomial_split_half(const polynomial_t * const a, polynomial_t * const a0
   a1->len = a->len >> 1;
 }
 
-void polynomial_sum_of_two_double(polynomial_t * const r1, const polynomial_t *a1,
-                                  const polynomial_t * const b1, polynomial_t * const r2,
-                                  const polynomial_t * const a2, const polynomial_t * const b2) {
+void polynomial_sum_of_two_double(polynomial_t *const r1, const polynomial_t *a1, const polynomial_t *const b1,
+                                  polynomial_t *const r2, const polynomial_t *const a2, const polynomial_t *const b2) {
   int i;
 
   for (i = 0; i < a1->len; i++) {
@@ -91,7 +90,7 @@ void polynomial_sum_of_two_double(polynomial_t * const r1, const polynomial_t *a
   }
 }
 
-void polynomial_sum_to_one(polynomial_t * const r, const polynomial_t * const a) {
+void polynomial_sum_to_one(polynomial_t *const r, const polynomial_t *const a) {
   int i;
 
   for (i = 0; i < a->len; i++) {
@@ -107,7 +106,7 @@ void polynomial_diff_from_two(polynomial_t *r, const polynomial_t *a, const poly
   }
 }
 
-int_stack_t *int_stack_expand(int_stack_t * const a) {
+int_stack_t *int_stack_expand(int_stack_t *const a) {
   if (!(a->array = realloc(a->array, (a->len * 2) * sizeof(int)))) {
     return NULL;
   }
@@ -117,8 +116,8 @@ int_stack_t *int_stack_expand(int_stack_t * const a) {
   return a;
 }
 
-void int_stack_temp_data(const int n, polynomial_t * const suma, polynomial_t * const sumb,
-                      polynomial_t * const mul, int_stack_t * const temp) {
+void int_stack_temp_data(const int n, polynomial_t *const suma, polynomial_t *const sumb, polynomial_t *const mul,
+                         int_stack_t *const temp) {
   /* Expand if the is no space left */
   while (temp->len - temp->pos <= (n << 2)) {
     int_stack_expand(temp);
@@ -130,15 +129,15 @@ void int_stack_temp_data(const int n, polynomial_t * const suma, polynomial_t * 
   suma->coefficients = &temp->array[temp->pos];
   sumb->coefficients = &temp->array[temp->pos + n];
 
-  mul->len = n << 1;
+  mul->len          = n << 1;
   mul->coefficients = &temp->array[temp->pos + (n << 1)];
 
   temp->pos = temp->pos + (n << 2);
 }
 
 /* Works only for polynomial_t of equal size 2^k */
-void polynomial_mul_karatsuba_impl(polynomial_t * const r, const polynomial_t * const a, const polynomial_t * const b,
-                                    int_stack_t * const temp) {
+void polynomial_mul_karatsuba_impl(polynomial_t *const r, const polynomial_t *const a, const polynomial_t *const b,
+                                   int_stack_t *const temp) {
   polynomial_t a1, a0, b1, b0, a0b0, a1b1, mul, suma, sumb, middle;
 
   /* Hardcoded basecase of n = 2 reduces the number of recursive calls */
@@ -168,7 +167,7 @@ void polynomial_mul_karatsuba_impl(polynomial_t * const r, const polynomial_t * 
   polynomial_mul_karatsuba_impl(&mul, &suma, &sumb, temp);
 
   middle.coefficients = &(r->coefficients[a0.len]);
-  middle.len = a->len;
+  middle.len          = a->len;
 
   polynomial_diff_from_two(&mul, &a0b0, &a1b1);
   polynomial_sum_to_one(&middle, &mul);
@@ -202,10 +201,10 @@ int is_pow_of_two(const int a) {
   return ((a & (a - 1)) == 0);
 }
 
-polynomial_t *polynomial_mul_karatsuba(polynomial_t * const a, polynomial_t * const b) {
+polynomial_t *polynomial_mul_karatsuba(polynomial_t *const a, polynomial_t *const b) {
   polynomial_t *r;
-  int_stack_t *temp;
-  int align_size;
+  int_stack_t  *temp;
+  int           align_size;
 
   if (!(a->len == b->len && is_pow_of_two(a->len) && is_pow_of_two(b->len))) {
     if (a->len > b->len && is_pow_of_two(a->len)) {
@@ -237,7 +236,7 @@ polynomial_t *polynomial_mul_karatsuba(polynomial_t * const a, polynomial_t * co
   return r;
 }
 
-void polynomial_print(const polynomial_t * const a) {
+void polynomial_print(const polynomial_t *const a) {
   int i, j;
 
   for (j = a->len - 1; a->coefficients[j] == 0; j--) {
@@ -252,7 +251,7 @@ void polynomial_print(const polynomial_t * const a) {
 }
 
 int main() {
-  int i, n, m;
+  int           i, n, m;
   polynomial_t *p1, *p2, *p3;
 
   scanf("%d %d", &n, &m);

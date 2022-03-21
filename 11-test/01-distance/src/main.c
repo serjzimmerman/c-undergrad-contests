@@ -21,7 +21,7 @@ int cmp_bitwise(unsigned long long x, unsigned long long y) {
 }
 
 int main() {
-  int res;
+  int                res;
   unsigned long long x, y;
 
   res = scanf("%llu %llu", &x, &y);

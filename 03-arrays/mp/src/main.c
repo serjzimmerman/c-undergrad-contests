@@ -4,7 +4,7 @@
 
 typedef struct {
   int *coefficients;
-  int len;
+  int  len;
 } polynomial;
 
 polynomial *polynomial_init(int len) {
@@ -42,7 +42,7 @@ void polynomial_free(polynomial *poly) {
 
 polynomial *polynomial_mul(polynomial *a, polynomial *b) {
   polynomial *r = polynomial_init(b->len + a->len - 1);
-  int i, j;
+  int         i, j;
 
   for (i = 0; i < a->len; i++) {
     r->coefficients[i] = 0;
@@ -58,7 +58,7 @@ polynomial *polynomial_mul(polynomial *a, polynomial *b) {
 }
 
 int main() {
-  int i, j, n, m, *array1, *array2;
+  int         i, j, n, m, *array1, *array2;
   polynomial *p1, *p2, *p3;
 
   scanf("%d %d", &n, &m);

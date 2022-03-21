@@ -7,20 +7,20 @@
 
 /* Overflow collision resolution using singly linked lists */
 struct pair_t {
-  char *key;
-  int value;
+  char          *key;
+  int            value;
   struct pair_t *next;
 };
 
 struct hash_table_t {
   struct pair_t **array;
-  size_t size;
+  size_t          size;
 };
 
 /* djb2 hash function http://www.cse.yorku.ca/~oz/hash.html */
 unsigned long hash_djb2(const char *str) {
   unsigned long hash = 5381;
-  int c;
+  int           c;
 
   while (c = *(str++)) {
     hash = ((hash << 5) + hash) + c; /* hash * 33 + c */
@@ -31,7 +31,7 @@ unsigned long hash_djb2(const char *str) {
 
 struct pair_t *pair_init(char *key, int value) {
   struct pair_t *pair;
-  size_t len;
+  size_t         len;
 
   pair = calloc(1, sizeof(struct pair_t));
   assert(pair);
@@ -92,7 +92,7 @@ void hash_table_free(struct hash_table_t *table) {
 
 void hash_table_insert(struct hash_table_t *table, struct pair_t *pair) {
   struct pair_t *empty;
-  unsigned long hash;
+  unsigned long  hash;
 
   assert(table);
   assert(pair);
@@ -115,7 +115,7 @@ void hash_table_insert(struct hash_table_t *table, struct pair_t *pair) {
 
 struct pair_t *hash_table_lookup(struct hash_table_t *table, char *key) {
   struct pair_t *find;
-  unsigned long hash;
+  unsigned long  hash;
 
   assert(table);
   assert(key);
@@ -140,7 +140,7 @@ struct pair_t *hash_table_lookup(struct hash_table_t *table, char *key) {
 }
 
 void getnc(char *dst, size_t n) {
-  int i;
+  int  i;
   char c;
 
   assert(dst);
@@ -150,7 +150,7 @@ void getnc(char *dst, size_t n) {
 
   for (i = 0; i < n; i++) {
     *(dst++) = c;
-    c = getchar();
+    c        = getchar();
   }
 
   *dst = '\0';
@@ -171,9 +171,9 @@ int gettokn(char *src) {
 
 int main() {
   struct hash_table_t *table;
-  struct pair_t *pair;
-  char *buf, *tok;
-  int a, l, n;
+  struct pair_t       *pair;
+  char                *buf, *tok;
+  int                  a, l, n;
 
   scanf("%d %d", &a, &l);
 

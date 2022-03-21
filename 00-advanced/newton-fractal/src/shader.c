@@ -19,7 +19,7 @@
 char *shader_root_folder = NULL;
 
 struct shader_s {
-  GLuint id;
+  GLuint      id;
   const char *name;
 };
 
@@ -49,7 +49,7 @@ shader_t *shader_compile(const char *name, char *folder, GLenum type) {
   }
 
   struct stat st;
-  char fullpath[PATH_MAX];
+  char        fullpath[PATH_MAX];
 
   strncpy(fullpath, folder, PATH_MAX);
   strncat(fullpath, name, PATH_MAX - strlen(folder));
@@ -93,7 +93,7 @@ shader_t *shader_compile(const char *name, char *folder, GLenum type) {
     return NULL;
   }
 
-  shader->id = id;
+  shader->id   = id;
   shader->name = name;
 
   return shader;
@@ -144,8 +144,8 @@ int shader_set_folder(const char *folder) {
 #define DEFAULT_MAX_SHADERS 32
 struct shader_manager_s {
   struct hash_table_t *table;
-  char *folder_path;
-  unsigned max_shaders;
+  char                *folder_path;
+  unsigned             max_shaders;
 };
 
 /* Hash the shader name to use in shader manager hashtable */

@@ -12,8 +12,8 @@ struct matn_t {
 
 struct matn_t *matn_init(size_t n, size_t m) {
   struct matn_t *mat = calloc(1, sizeof(struct matn_t) + n * sizeof(float *));
-  mat->n = n;
-  mat->m = m;
+  mat->n             = n;
+  mat->m             = m;
 
   if (!mat) {
     return NULL;
@@ -49,13 +49,13 @@ struct matn_t *matn_init_from_array(float *array, size_t n, size_t m) {
 
 void mat_util_swap_array_pointers(float **array1, float **array2) {
   float *temp = *(array1);
-  *(array1) = *(array2);
-  *(array2) = temp;
+  *(array1)   = *(array2);
+  *(array2)   = temp;
 }
 
 size_t mat_find_leader_n(struct matn_t *mat, size_t n, int *z) {
   size_t i, j, leader;
-  int zeros = 0;
+  int    zeros = 0;
 
   assert(mat);
 
@@ -70,7 +70,7 @@ size_t mat_find_leader_n(struct matn_t *mat, size_t n, int *z) {
 
     if (j < zeros) {
       leader = i;
-      zeros = j;
+      zeros  = j;
     }
   }
 
@@ -94,7 +94,7 @@ void mat_util_2array_c_sum(float *array1, float *array2, float c, size_t n) {
 
 struct matn_t *matn_convert_to_row_echelon(struct matn_t *mat) {
   size_t leader;
-  int z;
+  int    z;
 
   assert(mat);
 
@@ -126,7 +126,7 @@ struct matn_t *matn_convert_to_row_echelon(struct matn_t *mat) {
 }
 
 float matn_mul_diag(struct matn_t *mat) {
-  int i;
+  int   i;
   float r = 1;
 
   assert(mat->n == mat->m);
@@ -147,10 +147,10 @@ void matn_print(struct matn_t *mat) {
 }
 
 int main() {
-  int res, i;
-  unsigned n;
+  int            res, i;
+  unsigned       n;
   struct matn_t *mat;
-  float det;
+  float          det;
 
   res = scanf("%u", &n);
 

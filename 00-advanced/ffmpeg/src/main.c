@@ -33,9 +33,9 @@
 #include <libavutil/dict.h>
 
 int main(int argc, char **argv) {
-  AVFormatContext *fmt_ctx = NULL;
-  AVDictionaryEntry *tag = NULL;
-  int ret;
+  AVFormatContext   *fmt_ctx = NULL;
+  AVDictionaryEntry *tag     = NULL;
+  int                ret;
 
   if (argc != 2) {
     printf("usage: %s <input_file>\n"

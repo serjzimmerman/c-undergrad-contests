@@ -1,14 +1,14 @@
 #include <assert.h>
+#include <ctype.h>
 #include <limits.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <ctype.h>
 
 void swap_chars(char *x, char *y) {
   char temp = *x;
-  *x = *y;
-  *y = temp;
+  *x        = *y;
+  *y        = temp;
 }
 
 void revstrn(char *str, int n) {
@@ -21,21 +21,21 @@ void revstrn(char *str, int n) {
 
 void readnc(FILE *stream, char *str, const int n) {
   char c;
-  int i = 0;
+  int  i = 0;
 
   while (isspace(c = getc(stream))) {
     ;
   }
   while (i < n) {
     str[i++] = c;
-    c = getc(stream); 
+    c        = getc(stream);
   }
   str[i] = '\0';
 }
 
 void reverse_substrings(char *str, const char *substr, const int n) {
   char *traveller;
-  int stringlen = strlen(str);
+  int   stringlen = strlen(str);
 
   traveller = str;
 
@@ -46,13 +46,13 @@ void reverse_substrings(char *str, const char *substr, const int n) {
 }
 
 int main() {
-  int sublen = 0, stringlen = 0;
+  int   sublen = 0, stringlen = 0;
   char *string, *substring;
 
   scanf("%d", &sublen);
   substring = calloc(1, sizeof(char) * (sublen + 1));
   readnc(stdin, substring, sublen);
-  
+
   scanf("%d", &stringlen);
   string = calloc(1, sizeof(char) * (stringlen + 1));
   readnc(stdin, string, stringlen);

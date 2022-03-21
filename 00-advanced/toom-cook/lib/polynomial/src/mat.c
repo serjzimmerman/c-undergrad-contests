@@ -6,8 +6,8 @@
 
 struct matn_t *matn_init(size_t n, size_t m) {
   struct matn_t *mat = calloc(1, sizeof(struct matn_t) + n * sizeof(struct frac_t *));
-  mat->n = n;
-  mat->m = m;
+  mat->n             = n;
+  mat->m             = m;
 
   if (!mat) {
     return NULL;
@@ -103,7 +103,7 @@ size_t mat_find_leader_n(struct matn_t *mat, size_t n, int *z) {
   assert(mat);
 
   int leader = n;
-  int zeros = 0;
+  int zeros  = 0;
 
   for (j = 0; j < mat->m && frac_iszero(mat->rows[n][j]); j++) {
     zeros++;
@@ -115,7 +115,7 @@ size_t mat_find_leader_n(struct matn_t *mat, size_t n, int *z) {
 
     if (j < zeros) {
       leader = i;
-      zeros = j;
+      zeros  = j;
     }
   }
 
@@ -130,13 +130,13 @@ size_t mat_find_leader_n(struct matn_t *mat, size_t n, int *z) {
 
 void mat_util_swap_array_pointers(struct frac_t **array1, struct frac_t **array2) {
   struct frac_t *temp = *(array1);
-  *(array1) = *(array2);
-  *(array2) = temp;
+  *(array1)           = *(array2);
+  *(array2)           = temp;
 }
 
 struct matn_t *matn_convert_to_row_echelon(struct matn_t *mat) {
   size_t leader;
-  int z;
+  int    z;
 
   assert(mat);
 
@@ -169,7 +169,7 @@ struct matn_t *matn_convert_to_row_echelon(struct matn_t *mat) {
 
 struct matn_t *matn_find_inverse(struct matn_t *mat) {
   struct frac_t c;
-  int z;
+  int           z;
 
   assert(mat);
   assert(mat->n == mat->m);

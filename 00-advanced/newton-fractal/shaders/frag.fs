@@ -1,7 +1,7 @@
 #version 330 core
 
-uniform vec2 iResolution;
-uniform vec2 iCenter;
+uniform vec2  iResolution;
+uniform vec2  iCenter;
 uniform float iTime;
 uniform float iZoom;
 
@@ -18,7 +18,7 @@ vec2 complex_add(vec2 a, vec2 b) {
 }
 
 void main() {
-  vec2 uv = vec2(gl_FragCoord.x / iResolution.x, gl_FragCoord.y / iResolution.y);
+  vec2  uv           = vec2(gl_FragCoord.x / iResolution.x, gl_FragCoord.y / iResolution.y);
   float aspect_ratio = iResolution.x / iResolution.y;
 
   vec2 ndf = uv - vec2(0.5, 0.5);

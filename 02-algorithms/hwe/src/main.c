@@ -7,7 +7,7 @@
 #define SIEVE_BIT 8
 
 struct sieve_t {
-  int n;
+  int            n;
   unsigned char *mod1;
   unsigned char *mod5;
 };
@@ -24,7 +24,7 @@ void sieve_set_number(struct sieve_t *sv, unsigned i) {
   int mod, n;
 
   mod = i % 6;
-  n = (i - mod) / 6;
+  n   = (i - mod) / 6;
 
   if (mod != 1 || mod != 5) {
     return;
@@ -37,7 +37,7 @@ int sieve_get_number(struct sieve_t *sv, unsigned i) {
   int mod, n;
 
   mod = i % 6;
-  n = (i - mod) / 6;
+  n   = (i - mod) / 6;
 
   return char_array_get_bit(((mod == 1) ? sv->mod1 : sv->mod5), n);
 }
@@ -65,7 +65,7 @@ int is_prime(struct sieve_t *sv, unsigned n) {
 int main() {
   struct sieve_t sieve = {0};
 
-  sieve.n = 2;
+  sieve.n    = 2;
   sieve.mod1 = calloc(sieve.n, sizeof(unsigned char));
   sieve.mod5 = calloc(sieve.n, sizeof(unsigned char));
 

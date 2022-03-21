@@ -11,8 +11,8 @@
 void swap_uint64(uint64_t *a, uint64_t *b) {
   uint64_t temp;
   temp = *a;
-  *a = *b;
-  *b = temp;
+  *a   = *b;
+  *b   = temp;
 }
 
 /* This code is shit, there is a builtin gcc function __inbuilt_ctz() */
@@ -162,7 +162,7 @@ uint8_t fermat_primality_test(uint64_t p, uint32_t i) {
 }
 
 int main() {
-  int res;
+  int      res;
   uint64_t x;
 
   res = scanf("%" PRIu64, &x);

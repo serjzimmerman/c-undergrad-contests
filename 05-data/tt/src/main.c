@@ -16,13 +16,13 @@ unsigned char_array_get_bit(char *array, unsigned bit) {
 
 struct tnode_t {
   struct tnode_t *left, *right;
-  int value;
+  int             value;
 };
 
 struct tbinary_t {
-  char *char_array;
+  char    *char_array;
   unsigned size_char_array, size_int_array, char_len, int_len;
-  int *int_array;
+  int     *int_array;
 };
 
 struct tbinary_t *node_binary_init(unsigned size) {
@@ -35,10 +35,10 @@ struct tbinary_t *node_binary_init(unsigned size) {
   }
 
   binary->size_char_array = size;
-  binary->size_int_array = size;
+  binary->size_int_array  = size;
 
   binary->char_len = 0;
-  binary->int_len = 0;
+  binary->int_len  = 0;
 
   binary->char_array = calloc(size, sizeof(char));
 
@@ -111,7 +111,7 @@ struct tnode_t *node_init(struct tnode_t *left, struct tnode_t *right, int value
     return NULL;
   }
 
-  node->left = left;
+  node->left  = left;
   node->right = right;
   node->value = value;
 
@@ -159,19 +159,19 @@ int *linsearch(int *data, int search, size_t num) {
 
 struct tnode_t *tree_generate_from_traverse(int *inorder, unsigned len, int *preorder) {
   struct tnode_t *root;
-  int *rootvalue, newlen;
+  int            *rootvalue, newlen;
 
   if (!len) {
     return NULL;
   }
 
-  root = node_init(NULL, NULL, preorder[0]);
+  root      = node_init(NULL, NULL, preorder[0]);
   rootvalue = linsearch(inorder, preorder[0], len);
 
   assert(rootvalue);
   newlen = rootvalue - inorder;
 
-  root->left = tree_generate_from_traverse(&inorder[0], newlen, &preorder[1]);
+  root->left  = tree_generate_from_traverse(&inorder[0], newlen, &preorder[1]);
   root->right = tree_generate_from_traverse(rootvalue + 1, len - 1 - newlen, &preorder[newlen + 1]);
 
   return root;
@@ -180,8 +180,8 @@ struct tnode_t *tree_generate_from_traverse(int *inorder, unsigned len, int *pre
 int main() {
   size_t len, i;
 
-  int *inorder, *preorder;
-  struct tnode_t *root;
+  int              *inorder, *preorder;
+  struct tnode_t   *root;
   struct tbinary_t *bin;
 
   scanf("%lu", &len);
@@ -207,7 +207,7 @@ int main() {
   }
 
   root = tree_generate_from_traverse(inorder, len, preorder);
-  bin = node_binary_init(12);
+  bin  = node_binary_init(12);
   get_node_binary(root, bin);
 
   printf("%ld ", len);

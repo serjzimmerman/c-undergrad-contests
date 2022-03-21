@@ -19,7 +19,7 @@
 struct cmd_args_t {
   char *input_path;
   char *output_path;
-  int to_lower;
+  int   to_lower;
 } cmd_args_default = {NULL, NULL, 0};
 
 const char *const usage_string = "Usage: wordcounter [-l] [-i <path>] [-o <path>]\n";
@@ -66,8 +66,8 @@ int handle_input(int argc, char **argv, struct cmd_args_t *args) {
 
 char *get_buf_from_file(struct cmd_args_t args, int *fd, size_t *len) {
   struct stat st;
-  char *buf;
-  int fdi;
+  char       *buf;
+  int         fdi;
 
   fdi = open(args.input_path, O_RDONLY);
   if (fdi == -1) {
@@ -78,8 +78,8 @@ char *get_buf_from_file(struct cmd_args_t args, int *fd, size_t *len) {
     fprintf(stderr, "Could not open input file %s\n", args.input_path);
     exit(EXIT_FAILURE);
   }
-  buf = mmap(NULL, st.st_size, PROT_READ | PROT_WRITE, MAP_PRIVATE, fdi, 0);
-  *fd = fdi;
+  buf  = mmap(NULL, st.st_size, PROT_READ | PROT_WRITE, MAP_PRIVATE, fdi, 0);
+  *fd  = fdi;
   *len = st.st_size;
 
   return buf;
@@ -88,10 +88,10 @@ char *get_buf_from_file(struct cmd_args_t args, int *fd, size_t *len) {
 void application_loop_read_file(struct cmd_args_t args) {
   struct counter_t *counter;
   struct sl_list_t *list;
-  char *buf, *tok;
-  int fdi, fdo;
-  size_t len;
-  FILE *fo;
+  char             *buf, *tok;
+  int               fdi, fdo;
+  size_t            len;
+  FILE             *fo;
 
   buf = get_buf_from_file(args, &fdi, &len);
 

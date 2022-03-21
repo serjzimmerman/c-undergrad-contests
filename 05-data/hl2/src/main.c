@@ -6,7 +6,7 @@
 
 struct node_t {
   struct node_t *next;
-  int data;
+  int            data;
 };
 
 struct node_t *node_init(int data) {
@@ -22,7 +22,7 @@ struct node_t *node_init(int data) {
 
 int loop_len(struct node_t *top) {
   struct node_t *slow, *fast;
-  int l = 0;
+  int            l = 0;
 
   if (!top) {
     return 0;
@@ -57,7 +57,7 @@ int loop_len(struct node_t *top) {
 
   for (;;) {
     slow = slow->next;
-    l = l + 1;
+    l    = l + 1;
     if (slow == fast) {
       return l;
     }
@@ -67,7 +67,7 @@ int loop_len(struct node_t *top) {
 int main() {
   struct node_t *top;
 
-  top = node_init(0);
+  top       = node_init(0);
   top->next = top;
 
   printf("%d\n", loop_len(top));

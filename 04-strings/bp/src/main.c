@@ -27,7 +27,7 @@ unsigned max_items(unsigned capacity, unsigned n, unsigned *array) {
 
 int main() {
   unsigned c, n, *array;
-  int i;
+  int      i;
 
   scanf("%u %u", &c, &n);
 
