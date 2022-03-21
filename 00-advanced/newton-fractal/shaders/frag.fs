@@ -30,11 +30,11 @@ void main() {
 
   vec2 julia_offset = vec2(cos(iTime / 1000) / 2, sin(iTime / 1000) / 2);
 
-  for (int i = 0; i < 512; ++i) {
+  for (int i = 0; i < 128; ++i) {
     pos = complex_mul(pos, pos) + initial_pos;
 
     if (dot(pos, pos) > 4.0) {
-      col = vec3(float(i) / 512.0, float(i) / 512.0, float(i) / 512.0);
+      col = vec3(float(i) / 128.0, float(i) / 128.0, float(i) / 128.0);
       break;
     }
   }
