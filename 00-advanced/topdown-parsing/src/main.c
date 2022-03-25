@@ -27,15 +27,15 @@ char *getueof() {
 
 int main() {
   token_t  token;
-  char    *test_string;
+  char    *s;
   lexer_t *lex;
 
-  test_string = getueof();
-  lex         = lexer_init(test_string);
+  s   = getueof();
+  lex = lexer_init(s);
 
   ast_node_t *node = parse_expr(lex);
 
-  if (!node) {
+  if (!node || lexer_get_current_token(lex).type != TOKEN_EOF) {
     printf("ERROR\n");
     goto main_exit;
   }
@@ -47,5 +47,6 @@ main_exit:
   lexer_free(lex);
   ast_free(node);
 
+  free(s);
   return 0;
 }
