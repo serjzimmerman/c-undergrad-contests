@@ -1,9 +1,9 @@
 #version 330 core
 
 uniform vec2  iResolution;
-uniform vec2  iCenter;
 uniform float iTime;
-uniform float iZoom;
+
+uniform mat3 iTranslate;
 
 in vec4 gl_FragCoord;
 
@@ -17,27 +17,52 @@ vec2 complex_add(vec2 a, vec2 b) {
   return vec2(a.x + b.x, a.y + b.y);
 }
 
+vec2 complex_div(vec2 n, vec2 d) {
+  return vec2((n.x * d.x + n.y * d.y), (n.y * d.x - n.x * d.y)) / dot(d, d);
+}
+
+/* Hardcore function f(z) = z^3 - 1 = 0 */
+
+vec2 compute_value(vec2 pos) {
+  return complex_mul(complex_mul(pos, pos), pos) - vec2(1.0, 0.0);
+}
+
+vec2 compute_derivative(vec2 pos) {
+  return 3 * complex_mul(pos, pos);
+}
+
+const vec2 roots[3] = vec2[3](vec2(1.0, 0.0), vec2(-0.5, -0.866), vec2(-0.5, 0.866));
+
 void main() {
-  vec2  uv           = vec2(gl_FragCoord.x / iResolution.x, gl_FragCoord.y / iResolution.y);
-  float aspect_ratio = iResolution.x / iResolution.y;
+  vec3 ndf = vec3(gl_FragCoord.x / iResolution.x - 0.5, gl_FragCoord.y / iResolution.y - 0.5, 1.0);
 
-  vec2 ndf = uv - vec2(0.5, 0.5);
-
-  vec2 pos = (vec2(ndf.x * aspect_ratio, ndf.y) / iZoom + iCenter);
+  vec2 pos = (iTranslate * ndf).xy;
   vec3 col = vec3(1.0, 1.0, 1.0);
 
-  vec2 initial_pos = pos;
+  for (int i = 0; i < 64; ++i) {
+    pos -= complex_div(compute_value(pos), compute_derivative(pos));
+  }
 
-  vec2 julia_offset = vec2(cos(iTime / 1000) / 2, sin(iTime / 1000) / 2);
+  int   closest = 0;
+  float dist    = dot(pos - roots[0], pos - roots[0]);
 
-  for (int i = 0; i < 128; ++i) {
-    pos = complex_mul(pos, pos) + initial_pos;
-
-    if (dot(pos, pos) > 4.0) {
-      col = vec3(float(i) / 128.0, float(i) / 128.0, float(i) / 128.0);
-      break;
+  float temp;
+  for (int i = 0; i < 3; ++i) {
+    if ((temp = dot(pos - roots[i], pos - roots[i])) < dist) {
+      closest = i;
+      dist    = temp;
     }
   }
 
-  fragColor = vec4(vec3(1.0, 1.0, 1.0) - col, 1.0);
+  switch (closest) {
+  case 0:
+    fragColor = vec4(1.0, 0.0, 0.0, 1.0);
+    break;
+  case 1:
+    fragColor = vec4(0.0, 1.0, 0.0, 1.0);
+    break;
+  case 2:
+    fragColor = vec4(0.0, 0.0, 1.0, 1.0);
+    break;
+  }
 }

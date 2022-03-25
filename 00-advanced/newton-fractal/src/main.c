@@ -13,28 +13,63 @@
 
 #include "logger.h"
 #include "shader.h"
+#include "util.h"
+
+#include <cglm/cglm.h>
+
+#define ZOOMSPEED 1e-4f
 
 void framebuffer_size_callback(GLFWwindow *window, int width, int height);
 void processInput(GLFWwindow *window);
 
-long long GetMillis() {
-  struct timeval te;
+struct {
+  int width, height;
+} resolution = {1920, 1080};
 
-  gettimeofday(&te, NULL);
+#define MAX_ROOTS 64
+struct {
+  vec2  center;
+  float zoom;
 
-  return te.tv_sec * 1000LL + te.tv_usec / 1000;
+  shader_manager_t *manager;
+
+  GLuint program;
+  GLuint VBO, VAO, EBO;
+  long   initial_ms;
+} newton_drawer;
+
+float vertices[] = {
+    1.0f,  1.0f,  0.0f, // top right
+    1.0f,  -1.0f, 0.0f, // bottom right
+    -1.0f, -1.0f, 0.0f, // bottom left
+    -1.0f, 1.0f,  0.0f  // top left
+};
+unsigned int indices[] = {
+    0, 1, 3, // first Triangle
+    1, 2, 3  // second Triangle
+};
+
+void process_input(GLFWwindow *window) {
+  if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
+    glfwSetWindowShouldClose(window, true);
+  }
 }
 
-int main() {
-  /* Initialize GLFW */
+void framebuffer_size_callback(GLFWwindow *window, int width, int height) {
+  glViewport(0, 0, width, height);
+  resolution.height = height;
+  resolution.width  = width;
+}
+
+GLFWwindow *window_init() {
   glfwInit();
 
   glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
   glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
   glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-  glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
+  glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE);
 
-  GLFWwindow *window = glfwCreateWindow(1920, 1080, "LearnOpenGL", NULL, NULL);
+  GLFWwindow *window = glfwCreateWindow(resolution.width, resolution.height, "Newton Fractal", NULL, NULL);
   glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 
   if (window == NULL) {
@@ -48,154 +83,110 @@ int main() {
   glewExperimental = GL_TRUE;
   if (glewInit() != GLEW_OK) {
     logger("Failed to initialize GLEW\n");
+    glfwTerminate();
     exit(EXIT_FAILURE);
   }
 
-  shader_manager_t *manager = shader_manager_init("shaders/");
-  if (!manager) {
+  return window;
+}
+
+void setup_newton() {
+  newton_drawer.manager = shader_manager_init("shaders/");
+  if (!newton_drawer.manager) {
     logger("Unable to initialize shader manager");
     exit(EXIT_FAILURE);
   }
 
-  GLuint vertex_shader = shader_manager_get(manager, "vertex.vs", GL_VERTEX_SHADER);
-  GLuint frag_shader   = shader_manager_get(manager, "frag.fs", GL_FRAGMENT_SHADER);
-
+  GLuint vertex_shader = shader_manager_get(newton_drawer.manager, "vertex.vs", GL_VERTEX_SHADER);
   if (vertex_shader == 0) {
     logger("Error compiling vertex shader\n");
     exit(EXIT_FAILURE);
   }
+
+  GLuint frag_shader = shader_manager_get(newton_drawer.manager, "frag.fs", GL_FRAGMENT_SHADER);
   if (frag_shader == 0) {
     logger("Error compiling fragment shader\n");
     exit(EXIT_FAILURE);
   }
 
-  GLuint shaderProgram = shader_program_link(vertex_shader, frag_shader);
-  if (shaderProgram == 0) {
+  newton_drawer.program = shader_program_link(vertex_shader, frag_shader);
+  if (newton_drawer.program == 0) {
     exit(EXIT_FAILURE);
   }
 
-  // set up vertex data (and buffer(s)) and configure vertex attributes
-  // ------------------------------------------------------------------
-  float vertices[] = {
-      1.0f,  1.0f,  0.0f, // top right
-      1.0f,  -1.0f, 0.0f, // bottom right
-      -1.0f, -1.0f, 0.0f, // bottom left
-      -1.0f, 1.0f,  0.0f  // top left
-  };
-  unsigned int indices[] = {
-      // note that we start from 0!
-      0, 1, 3, // first Triangle
-      1, 2, 3  // second Triangle
-  };
+  newton_drawer.zoom = 1.0f;
+  glm_vec2_zero(newton_drawer.center);
+  newton_drawer.initial_ms = get_millis();
 
-  unsigned int dimensions[] = {
-      1920,
-      1080,
-  };
+  glGenVertexArrays(1, &newton_drawer.VAO);
+  glGenBuffers(1, &newton_drawer.VBO);
+  glGenBuffers(1, &newton_drawer.EBO);
 
-  unsigned int VBO, VAO, EBO;
-  glGenVertexArrays(1, &VAO);
-  glGenBuffers(1, &VBO);
-  glGenBuffers(1, &EBO);
-  // bind the Vertex Array Object first, then bind and set vertex buffer(s), and then configure vertex attributes(s).
-  glBindVertexArray(VAO);
+  glBindVertexArray(newton_drawer.VAO);
 
-  glBindBuffer(GL_ARRAY_BUFFER, VBO);
+  glBindBuffer(GL_ARRAY_BUFFER, newton_drawer.VBO);
   glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 
-  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, newton_drawer.EBO);
   glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
 
   glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void *)0);
   glEnableVertexAttribArray(0);
 
-  // note that this is allowed, the call to glVertexAttribPointer registered VBO as the vertex attribute's bound vertex
-  // buffer object so afterwards we can safely unbind
   glBindBuffer(GL_ARRAY_BUFFER, 0);
-
-  // remember: do NOT unbind the EBO while a VAO is active as the bound element buffer object IS stored in the VAO; keep
-  // the EBO bound.
-  // glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-
-  // You can unbind the VAO afterwards so other VAO calls won't accidentally modify this VAO, but this rarely happens.
-  // Modifying other VAOs requires a call to glBindVertexArray anyways so we generally don't unbind VAOs (nor VBOs) when
-  // it's not directly necessary.
   glBindVertexArray(0);
+}
 
-  // uncomment this call to draw in wireframe polygons.
-  // glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+void draw_newton() {
+  mat3 mat;
 
-  // render loop
-  // -----------
-  float zoom = 0.250f; //
+  float current_ms = get_millis() - newton_drawer.initial_ms;
 
-  long initial_ms = GetMillis();
+  newton_drawer.zoom = exp((-1) * current_ms * ZOOMSPEED);
+  glUseProgram(newton_drawer.program);
+  /* Calculate translation matrix */
+  glm_mat3_identity(mat);
+  glm_translate2d(mat, (vec2){0, 0});
+  glm_scale2d(mat, (vec2){(float)resolution.width / (float)resolution.height * newton_drawer.zoom, newton_drawer.zoom});
+
+  GLint iResolutionPosition = glGetUniformLocation(newton_drawer.program, "iResolution");
+  glUniform2f(iResolutionPosition, resolution.width, resolution.height);
+
+  GLint iTranslatePos = glGetUniformLocation(newton_drawer.program, "iTranslate");
+  glUniformMatrix3fv(iTranslatePos, 1, GL_FALSE, &mat[0][0]);
+
+  glBindVertexArray(newton_drawer.VAO);
+  glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+}
+
+void exit_newton() {
+  glDeleteVertexArrays(1, &newton_drawer.VAO);
+  glDeleteBuffers(1, &newton_drawer.VBO);
+  glDeleteBuffers(1, &newton_drawer.EBO);
+  glDeleteProgram(newton_drawer.program);
+
+  shader_manager_free(newton_drawer.manager);
+}
+
+int main() {
+  GLFWwindow *window = window_init();
+
+  setup_newton();
 
   while (!glfwWindowShouldClose(window)) {
-    // input
-    // -----
-    processInput(window);
+    process_input(window);
 
-    // render
-    // ------
     glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT);
 
-    // draw our first triangle
-    glUseProgram(shaderProgram);
+    draw_newton();
 
-    GLint iResolutionPosition = glGetUniformLocation(shaderProgram, "iResolution");
-    glUniform2f(iResolutionPosition, 1920.f, 1080.f);
-    GLint iCenterPos = glGetUniformLocation(shaderProgram, "iCenter");
-    glUniform2f(iCenterPos, -0.16f, 1.0405f);
-    GLint iZoomPos = glGetUniformLocation(shaderProgram, "iZoom");
-    glUniform1f(iZoomPos, zoom);
-
-    float delta_ms = (float)(GetMillis() - initial_ms);
-    if (delta_ms > 2000.0f) {
-      zoom = 0.250f * exp((delta_ms - 2000.0f) / 5000);
-    }
-
-    GLint iTimePos = glGetUniformLocation(shaderProgram, "iTime");
-    glUniform1f(iTimePos, delta_ms);
-
-    glBindVertexArray(VAO); // seeing as we only have a single VAO there's no need to bind it every time, but we'll do
-                            // so to keep things a bit more organized
-                            // glDrawArrays(GL_TRIANGLES, 0, 6);
-
-    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-    // glBindVertexArray(0); // no need to unbind it every time
-
-    // glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
-    // -------------------------------------------------------------------------------
     glfwSwapBuffers(window);
     glfwPollEvents();
   }
 
-  // optional: de-allocate all resources once they've outlived their purpose:
-  // ------------------------------------------------------------------------
-  glDeleteVertexArrays(1, &VAO);
-  glDeleteBuffers(1, &VBO);
-  glDeleteBuffers(1, &EBO);
-  glDeleteProgram(shaderProgram);
+  exit_newton();
 
-  // glfw: terminate, clearing all previously allocated GLFW resources.
-  // ------------------------------------------------------------------
   glfwTerminate();
   return 0;
-}
-
-// process all input: query GLFW whether relevant keys are pressed/released this frame and react accordingly
-// ---------------------------------------------------------------------------------------------------------
-void processInput(GLFWwindow *window) {
-  if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
-    glfwSetWindowShouldClose(window, true);
-}
-
-// glfw: whenever the window size changed (by OS or user resize) this callback function executes
-// ---------------------------------------------------------------------------------------------
-void framebuffer_size_callback(GLFWwindow *window, int width, int height) {
-  // make sure the viewport matches the new window dimensions; note that width and
-  // height will be significantly larger than specified on retina displays.
-  glViewport(0, 0, width, height);
 }
