@@ -22,6 +22,6 @@ find_package(OpenGL REQUIRED)
 # glew
 find_package(GLEW REQUIRED)
 
-target_link_libraries(newton-fractal glfw ${OPENGL_LIBRARIES} ${GLFW_LIBRARY_DIRS} ${GLEW_LIBRARIES} m hashtable)
+target_link_libraries(newton-fractal glfw ${OPENGL_LIBRARIES} ${GLFW_LIBRARY_DIRS} ${GLEW_LIBRARIES} cglm_headers m hashtable)
 target_include_directories(newton-fractal PRIVATE ${GLFW_INCLUDE_DIRS} ${OPENGL_INCLUDE_DIRS} ${GLEW_INCLUDE_DIRS})
 install(TARGETS newton-fractal DESTINATION ${CMAKE_CURRENT_SOURCE_DIR})

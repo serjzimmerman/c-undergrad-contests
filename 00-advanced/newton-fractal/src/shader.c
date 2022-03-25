@@ -234,3 +234,10 @@ GLuint shader_manager_get(shader_manager_t *manager, const char *name, GLenum ty
 
   return shader->id;
 }
+
+void shader_manager_free(shader_manager_t *manager) {
+  assert(manager);
+
+  hash_table_free(manager->table);
+  free(manager);
+}
