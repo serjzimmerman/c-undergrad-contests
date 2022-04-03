@@ -1,0 +1,38 @@
+%{
+#include <stdlib.h>
+#include <string.h>
+
+enum keyword_e {
+  OP_TWO_IMM_MOVI = 0x0,
+  OP_TWO_ADD      = 0x1,
+  OP_TWO_SUB      = 0x2,
+  OP_TWO_MUL      = 0x3,
+  OP_TWO_DIV      = 0x4,
+  OP_ONE_IN       = 0x5,
+  OP_ONE_OUT      = 0x6,
+  REG_A           = 0x7,
+  REG_B           = 0x8,
+  REG_C           = 0x9,
+  REG_D           = 0x10,
+};
+
+%}
+
+struct keyword_s {
+  char *name;
+  enum keyword_e keyword;
+};
+
+%%
+MOVI,   OP_TWO_IMM_MOVI
+ADD,    OP_TWO_ADD
+SUB,    OP_TWO_SUB
+MUL,    OP_TWO_MUL
+DIV,    OP_TWO_DIV
+IN,     OP_ONE_IN
+OUT,    OP_ONE_OUT
+A,      REG_A
+B,      REG_B
+C,      REG_C
+D,      REG_D
+%%

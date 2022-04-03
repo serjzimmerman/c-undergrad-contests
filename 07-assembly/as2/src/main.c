@@ -22,24 +22,24 @@ typedef struct {
     unsigned char raw;
 
     struct {
-      unsigned char imm : 7;
+      unsigned char imm    : 7;
       unsigned char isnimm : 1;
     } imm_bitfield;
 
     struct {
-      unsigned char op2 : 2;
-      unsigned char op1 : 2;
+      unsigned char op2    : 2;
+      unsigned char op1    : 2;
       unsigned char opcode : 2;
-      unsigned char is1op : 1;
+      unsigned char is1op  : 1;
       unsigned char isnimm : 1;
     } op2_bitfield;
 
     struct {
-      unsigned char op : 2;
-      unsigned char opcode : 1;
+      unsigned char op       : 2;
+      unsigned char opcode   : 1;
       unsigned char reserved : 3;
-      unsigned char is1op : 1;
-      unsigned char isnimm : 1;
+      unsigned char is1op    : 1;
+      unsigned char isnimm   : 1;
     } op1_bitfield;
   };
 } command_t;
