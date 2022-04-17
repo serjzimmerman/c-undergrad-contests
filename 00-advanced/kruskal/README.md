@@ -6,17 +6,17 @@ Kruskal's algorithm for finding spanning tree with minimum total edge weight
 
 ### Linux
 ```sh
-# Clone repository and navigate to the dictionary directory
+# Clone repository and navigate to the kruskal directory
 git clone https://github.com/serjzimmerman/mipt-vladimirov-contest.git
 cd path/to/kruskal
 
 cmake -S ./ -B build/ DCMAKE_BUILD_TYPE=Debug -DVERBOSE=On
-# Build in debug or release configuration. Set VERBOSE option to ON for VERBOSE errors
+# Build in debug or release configuration. Set VERBOSE option to ON for verbose errors
 cd build/
 make install
 ```
 
-## 2. Running tests for hashtable module
+## 2. Running tests
 ```sh
 # Run all tests for both kruskal target. Test cases are taken from the contest problem
 ./run_tests.sh
