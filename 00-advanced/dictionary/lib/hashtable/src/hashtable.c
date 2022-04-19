@@ -179,6 +179,9 @@ void *hash_table_lookup(struct hash_table_t *table, void *key) {
   return NULL;
 }
 
+void hash_table_remove(struct hash_table_t *table, void *key) {
+}
+
 void resize_node_callback(struct sl_node_t *node, struct sl_list_t *list, va_list argp) {
   struct hash_table_t *table;
   unsigned long        hash;
