@@ -17,6 +17,7 @@ void                 hash_table_free(struct hash_table_t *table);
 int                  hash_table_insert(struct hash_table_t **table, void *pair);
 void                *hash_table_lookup(struct hash_table_t *table, void *key);
 struct hash_table_t *hash_table_resize(struct hash_table_t **table, size_t size);
+void                 hash_table_remove(struct hash_table_t *table, void *key);
 
 size_t hash_table_get_size(struct hash_table_t *table);
 size_t hash_table_get_buckets_used(struct hash_table_t *table);

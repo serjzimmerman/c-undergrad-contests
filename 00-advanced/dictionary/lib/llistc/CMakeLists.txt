@@ -1,6 +1,5 @@
 set(LIB_SOURCES
     src/sllistc.c
-    src/dllistc.c
 )
 
 add_library(llistc STATIC ${LIB_SOURCES})
