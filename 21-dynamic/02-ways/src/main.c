@@ -1,7 +1,7 @@
 /* https://kpm8.mipt.ru:44367/cgi-bin/new-register?contest_id=170104&locale_id=1
  */
 
-#in\clude < ctype.h>
+#include <ctype.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
