@@ -1,3 +1,3 @@
-# mipt-vladimirov-contest
+# c-undergrad-contests
 
-Solutions to problems for programming [contests](http://olymp1.vdi.mipt.ru/) at MIPT Vladimirov class for first semester
+Solutions to problems for programming [contests](http://olymp1.vdi.mipt.ru/)

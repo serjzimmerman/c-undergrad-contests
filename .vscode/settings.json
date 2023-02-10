@@ -1,6 +1,0 @@
-{
-    "editor.formatOnSave": true,
-    "editor.formatOnType": true,
-    "clang-format.fallbackStyle": "LLVM",
-    "editor.detectIndentation": true,
-}
